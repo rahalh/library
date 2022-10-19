@@ -1,5 +1,6 @@
 namespace Media.API.Adapters
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Dapper;
@@ -17,7 +18,8 @@ namespace Media.API.Adapters
         {
             await using var connection = new NpgsqlConnection(this.connectionString);
             await connection.OpenAsync(token);
-            using var command = new NpgsqlCommand(@"insert into media(external_id, title, description, language_code, publish_date, media_type) values (@externalId, @title, @description, @languageCode, @publishDate, @mediaType)", connection);
+            using var command = new NpgsqlCommand(@"
+                insert into media(external_id, title, description, language_code, publish_date, media_type) values (@externalId, @title, @description, @languageCode, @publishDate, @mediaType)", connection);
             command.Parameters.AddRange(new NpgsqlParameter[]
             {
                 new ("externalId", media.ExternalID),
@@ -34,7 +36,18 @@ namespace Media.API.Adapters
         public async Task<Media> FetchByID(string id, CancellationToken token)
         {
             await using var connection = new NpgsqlConnection(this.connectionString);
-            var query = @"select external_id as externalId, title, description, language_code as languageCode, publish_date as publishDate, media_type as MediaType, create_time as CreateTime, update_time as UpdateTime from media where external_id = @id";
+            var query = @"
+                select
+                external_id as externalId,
+                title,
+                description,
+                language_code as languageCode,
+                publish_date as publishDate,
+                media_type as MediaType,
+                create_time as CreateTime,
+                update_time as UpdateTime,
+                total_views as TotalViews
+                from media where external_id = @id";
             var res = await connection.QueryFirstOrDefaultAsync<Media>(new CommandDefinition(query, new {id}, cancellationToken: token));
             if (res is null)
             {
@@ -49,6 +62,36 @@ namespace Media.API.Adapters
             await using var connection = new NpgsqlConnection(this.connectionString);
             var command = @"delete from media where external_id = @id";
             await connection.ExecuteAsync(command, new {id});
+        }
+
+        public async Task<List<Media>> List(PaginationParams parameters, CancellationToken token)
+        {
+            await using var connection = new NpgsqlConnection(this.connectionString);
+            var query = @"
+                select
+                external_id as externalId,
+                title,
+                description,
+                language_code as languageCode,
+                publish_date as publishDate,
+                media_type as MediaType,
+                create_time as CreateTime,
+                update_time as UpdateTime,
+                total_views as TotalViews
+                from media
+                where @token is null or external_id >= @token
+                order by total_views desc
+                fetch first @size rows only";
+
+            var res = await connection.QueryAsync<Media>(new CommandDefinition(query, new {token = parameters.Token, size = parameters.Size}, cancellationToken: token));
+            return res.AsList();
+        }
+
+        public async Task IncrementViewCount(string id, CancellationToken token)
+        {
+            await using var connection = new NpgsqlConnection(this.connectionString);
+            var command = @"update media set total_views = total_views + 1 where external_id = @id";
+            await connection.ExecuteAsync(new CommandDefinition(command, new {id}, cancellationToken: token));
         }
     }
 }

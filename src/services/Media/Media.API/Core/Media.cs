@@ -1,6 +1,7 @@
 namespace Media.API.Core
 {
     using System;
+    using System.Text.Json.Serialization;
 
     public static class Status
     {
@@ -17,6 +18,7 @@ namespace Media.API.Core
 
     public class Media
     {
+        [JsonIgnore]
         public int ID { get; set; } = 0;
         public string ExternalID { get; set; } = Nanoid.Nanoid.Generate();
         public string Title { get; set; }

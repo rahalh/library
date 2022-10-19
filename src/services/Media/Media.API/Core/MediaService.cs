@@ -1,5 +1,6 @@
 namespace Media.API.Core
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -20,9 +21,24 @@ namespace Media.API.Core
             return media;
         }
 
-        // TODO update total views
-        public async Task<Media> Get(string id, CancellationToken token) => await this.repo.FetchByID(id, token);
+        public async Task<Media> Get(string id, CancellationToken token)
+        {
+            var media = await this.repo.FetchByID(id, token);
+            if (media is not null)
+            {
+                await this.repo.IncrementViewCount(id, token);
+                media.TotalViews++;
+            }
+            return media;
+        }
 
         public async Task Delete(string id, CancellationToken token) => await this.repo.Remove(id, token);
+
+        public async Task<List<Media>> List(PaginationParams parameters, CancellationToken token)
+        {
+            parameters.Size++;
+            var medias = await this.repo.List(parameters, token);
+            return medias;
+        }
     }
 }

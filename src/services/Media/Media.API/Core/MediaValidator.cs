@@ -13,7 +13,7 @@ namespace Media.API.Core
 
             this.RuleFor(x => x.Description)
                 .NotNull()
-                .MaximumLength(500)
+                .MaximumLength(1024)
                 .MinimumLength(1);
 
             this.RuleFor(x => x.PublishDate).NotNull();
