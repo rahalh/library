@@ -1,6 +1,7 @@
-namespace Media.API.Endpoints
+namespace Media.API.Ports.HTTP.Endpoints
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
     using Core;
     using Microsoft.AspNetCore.Http;
@@ -12,9 +13,10 @@ namespace Media.API.Endpoints
         string MediaType,
         DateTime PublishDate
     );
+
     public static class CreateMedia
     {
-        public static async Task<IResult> Handler(IMediaService srv, CreateRequest req)
+        public static async Task<IResult> Handler(IMediaService srv, CreateRequest req, CancellationToken token)
         {
             try
             {
@@ -23,7 +25,7 @@ namespace Media.API.Endpoints
                     Title = req.Title,
                     Description = req.Description,
                     PublishDate = req.PublishDate
-                });
+                }, token);
                 return Results.Ok(author);
             }
             catch (EntityValidationException ex)

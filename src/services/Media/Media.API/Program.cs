@@ -1,10 +1,10 @@
 using FluentValidation;
 using Media.API.Adapters;
 using Media.API.Core;
-using Media.API.Endpoints;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Media.API.Ports.HTTP;
+using Media.API.Ports.HTTP.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
