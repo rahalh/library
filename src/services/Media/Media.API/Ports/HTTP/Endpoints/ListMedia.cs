@@ -1,11 +1,9 @@
 namespace Media.API.Ports.HTTP.Endpoints
 {
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Core;
-    using Dapper;
     using Microsoft.AspNetCore.Http;
 
     public record ListRequest(
@@ -22,15 +20,8 @@ namespace Media.API.Ports.HTTP.Endpoints
     {
         public static async Task<IResult> Handler(IMediaService srv, ListRequest req, CancellationToken token)
         {
-            var medias = await srv.List(new PaginationParams(req.PageToken, req.PageSize), token);
-
-            string nextToken = null;
-            if (medias.Count > req.PageSize)
-            {
-                nextToken = medias.LastOrDefault()?.ExternalID;
-                medias = medias.SkipLast(1).AsList();
-            }
-            return Results.Ok(new ListResponse(medias, nextToken));
+            var res = await srv.List(new PaginationParams(req.PageToken, req.PageSize), token);
+            return Results.Ok(new ListResponse(res.Medias, res.NextPageToken));
         }
     }
 }

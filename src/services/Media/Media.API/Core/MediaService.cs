@@ -1,8 +1,12 @@
 namespace Media.API.Core
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Dapper;
+
+    public record ListMediaResult(List<Media> Medias, string NextPageToken);
 
     public class MediaService : IMediaService
     {
@@ -34,11 +38,18 @@ namespace Media.API.Core
 
         public async Task Delete(string id, CancellationToken token) => await this.repo.Remove(id, token);
 
-        public async Task<List<Media>> List(PaginationParams parameters, CancellationToken token)
+        public async Task<ListMediaResult> List(PaginationParams parameters, CancellationToken token)
         {
             parameters.Size++;
             var medias = await this.repo.List(parameters, token);
-            return medias;
+            string nextToken = null;
+            if (medias.Count > parameters.Size)
+            {
+                nextToken = medias.LastOrDefault()?.ExternalID;
+                medias = medias.SkipLast(1).AsList();
+            }
+
+            return new ListMediaResult(medias, nextToken);
         }
     }
 }
