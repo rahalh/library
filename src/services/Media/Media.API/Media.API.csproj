@@ -47,4 +47,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.2.1" />
     <PackageReference Include="System.Data.SqlClient" version="4.8.2" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Utilities" />
+  </ItemGroup>
 </Project>

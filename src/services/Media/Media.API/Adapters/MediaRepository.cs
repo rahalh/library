@@ -61,7 +61,7 @@ namespace Media.API.Adapters
         {
             await using var connection = new NpgsqlConnection(this.connectionString);
             var command = @"delete from media where external_id = @id";
-            await connection.ExecuteAsync(command, new {id});
+            await connection.ExecuteAsync(new CommandDefinition(command, new {id}, cancellationToken: token));
         }
 
         public async Task<List<Media>> List(PaginationParams parameters, CancellationToken token)
