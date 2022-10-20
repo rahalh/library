@@ -1,4 +1,4 @@
-namespace Media.API.Ports.HTTP.Endpoints
+namespace Media.API.Ports.HTTP.Handlers
 {
     using System;
     using System.Threading;

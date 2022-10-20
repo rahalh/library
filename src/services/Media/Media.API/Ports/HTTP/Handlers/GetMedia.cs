@@ -1,21 +1,24 @@
-using System.Threading;
-using System.Threading.Tasks;
-using Media.API.Adapters.Exceptions;
-using Media.API.Core;
-using Microsoft.AspNetCore.Http;
-
-public static class GetMedia
+namespace Media.API.Ports.HTTP.Handlers
 {
-    public static async Task<IResult> Handler(IMediaService srv, string id, CancellationToken token)
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Media.API.Adapters.Exceptions;
+    using Media.API.Core;
+    using Microsoft.AspNetCore.Http;
+
+    public static class GetMedia
     {
-        try
+        public static async Task<IResult> Handler(IMediaService srv, string id, CancellationToken token)
         {
-            var media = await srv.Get(id, token);
-            return Results.Ok(media);
-        }
-        catch (NotFoundException _)
-        {
-            return Results.NotFound();
+            try
+            {
+                var media = await srv.Get(id, token);
+                return Results.Ok(media);
+            }
+            catch (NotFoundException _)
+            {
+                return Results.NotFound();
+            }
         }
     }
 }

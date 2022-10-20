@@ -1,13 +1,16 @@
-using System.Threading;
-using System.Threading.Tasks;
-using Media.API.Core;
-using Microsoft.AspNetCore.Http;
-
-public static class DeleteMedia
+namespace Media.API.Ports.HTTP.Handlers
 {
-    public static async Task<IResult> Handler(IMediaService srv, string id, CancellationToken token)
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Media.API.Core;
+    using Microsoft.AspNetCore.Http;
+
+    public static class DeleteMedia
     {
-        await srv.Delete(id, token);
-        return Results.NoContent();
+        public static async Task<IResult> Handler(IMediaService srv, string id, CancellationToken token)
+        {
+            await srv.Delete(id, token);
+            return Results.NoContent();
+        }
     }
 }

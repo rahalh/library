@@ -5,7 +5,7 @@ using Media.API.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Media.API.Ports.HTTP;
-using Media.API.Ports.HTTP.Endpoints;
+using Media.API.Ports.HTTP.Handlers;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
@@ -19,8 +19,9 @@ Log.Logger = new LoggerConfiguration()
         builder.Environment.IsProduction() ? LogEventLevel.Information : LogEventLevel.Debug)
     .CreateLogger();
 
-builder.Services.AddSingleton<IMediaRepository, MediaRepository>();
 builder.Services.AddSingleton<IMediaService, MediaService>();
+builder.Services.AddSingleton<IMediaRepository, MediaPgRepository>();
+builder.Services.Decorate<IMediaRepository, MediaRedisRepository>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreateRequest>();
 
@@ -28,6 +29,7 @@ var app = builder.Build();
 
 // TODO add swagger
 // TODO document endpoints
+
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.MapMediaEndpoints();

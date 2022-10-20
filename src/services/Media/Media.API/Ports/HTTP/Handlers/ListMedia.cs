@@ -1,4 +1,4 @@
-namespace Media.API.Ports.HTTP.Endpoints
+namespace Media.API.Ports.HTTP.Handlers
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -20,7 +20,7 @@ namespace Media.API.Ports.HTTP.Endpoints
     {
         public static async Task<IResult> Handler(IMediaService srv, ListRequest req, CancellationToken token)
         {
-            var res = await srv.List(new PaginationParams(req.PageToken, req.PageSize), token);
+            var res = await srv.List(new PaginationParams(req?.PageToken, req?.PageSize), token);
             return Results.Ok(new ListResponse(res.Medias, res.NextPageToken));
         }
     }

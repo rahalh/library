@@ -4,7 +4,7 @@ namespace Media.API.Ports.HTTP
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Routing;
     using Core;
-    using Endpoints;
+    using Handlers;
     using Microsoft.AspNetCore.Mvc;
 
     public static class MediaEndpoints
