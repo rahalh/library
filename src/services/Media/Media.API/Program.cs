@@ -26,6 +26,9 @@ builder.Services.AddValidatorsFromAssemblyContaining<CreateRequest>();
 
 var app = builder.Build();
 
+// TODO add swagger
+// TODO document endpoints
+
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.MapMediaEndpoints();
 

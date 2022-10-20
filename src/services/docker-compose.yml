@@ -1,6 +1,26 @@
 version: "3.3"
 services:
   #
+  # Microservices
+  #
+  media:
+    build: ./Media/Media.API
+    hostname: media.lib.com
+    image: lib-media
+    restart: always
+    volumes:
+      - api:/usr/src/media/
+    ports:
+      - "3002:8080"
+    depends_on:
+      - postgres
+      - redis
+#      - kafka
+#      - zipkin
+    networks:
+      - lib-tier
+
+  #
   # Infrastructure
   #
   redis:
