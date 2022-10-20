@@ -27,8 +27,12 @@ namespace Media.API.Middleware
 
         private static Task HandleExceptionAsync(HttpContext ctx, Exception ex)
         {
-            Log.Error(ex, null);
-            return ctx.Response.WriteAsJsonAsync(new ProblemDetails() { Status = (int)HttpStatusCode.InternalServerError });
+            Log.Error(ex, "An unhandled error");
+            return ctx.Response.WriteAsJsonAsync(new ProblemDetails()
+            {
+                Status = (int)HttpStatusCode.InternalServerError,
+                Title = "An unexpected error occurred while processing your request."
+            });
         }
     }
 }
