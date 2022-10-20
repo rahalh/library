@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using Media.API.Adapters.Exceptions;
 using Media.API.Core;
 using Microsoft.AspNetCore.Http;
 

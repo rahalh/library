@@ -2,22 +2,15 @@ namespace Media.API.Core
 {
     public class PaginationParams
     {
-        public string Token;
-        public int Size;
+        public string Token { get; }
+        public int Size { get; set; }
 
         public PaginationParams(string token, int? size)
         {
             this.Token = token;
             if (size is not null && size > 0)
             {
-                if (size > 100)
-                {
-                    this.Size = 100;
-                }
-                else
-                {
-                    this.Size = size.Value;
-                }
+                this.Size = this.Size > 100 ? 100 : size.Value;
             }
             else
             {

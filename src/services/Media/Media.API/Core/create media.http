@@ -1,0 +1,7 @@
+POST localhost:5000/media
+Content-Type: application/json
+
+{
+    "title": "Test"
+}
+

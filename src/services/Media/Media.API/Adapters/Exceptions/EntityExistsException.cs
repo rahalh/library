@@ -1,7 +1,5 @@
 namespace Media.API.Adapters.Exceptions
 {
-    public class EntityExistsException
-    {
-        
-    }
+    using System;
+    public class EntityExistsException : Exception {}
 }

@@ -1,6 +1,5 @@
 namespace Media.API.Ports.HTTP
 {
-    using System.Collections.Generic;
     using System.Threading;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Routing;

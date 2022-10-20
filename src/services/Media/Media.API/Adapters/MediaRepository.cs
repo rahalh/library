@@ -4,6 +4,7 @@ namespace Media.API.Adapters
     using System.Threading;
     using System.Threading.Tasks;
     using Dapper;
+    using Exceptions;
     using Media.API.Core;
     using Microsoft.Extensions.Configuration;
     using Npgsql;
@@ -29,8 +30,19 @@ namespace Media.API.Adapters
                 new ("publishDate", media.PublishDate),
                 new ("mediaType", media.MediaType) { DataTypeName = "media_enum" },
             });
-            await command.ExecuteNonQueryAsync(token);
-            // TODO may throw conflict exception
+            try
+            {
+                await command.ExecuteNonQueryAsync(token);
+            }
+            catch (NpgsqlException ex)
+            {
+                if (ex.ErrorCode == 23505)
+                {
+                    throw new EntityExistsException();
+                }
+
+                throw;
+            }
         }
 
         public async Task<Media> FetchByID(string id, CancellationToken token)

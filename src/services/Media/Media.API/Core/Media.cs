@@ -25,6 +25,7 @@ namespace Media.API.Core
         public string Description { get; set; }
         public DateTime PublishDate { get; set; }
         public string LanguageCode { get; set; } = "en";
+        // TODO fix me
         public string MediaType { get; set; } = global::Media.API.Core.MediaType.MediaBook;
         public int TotalViews { get; set; } = 0;
         public DateTime CreateTime { get; set; } = DateTime.Now;

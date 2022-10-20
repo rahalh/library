@@ -4,6 +4,7 @@ namespace Media.API.Ports.HTTP.Endpoints
     using System.Threading;
     using System.Threading.Tasks;
     using Core;
+    using Core.Exceptions;
     using Microsoft.AspNetCore.Http;
 
     public record CreateRequest(
@@ -30,7 +31,7 @@ namespace Media.API.Ports.HTTP.Endpoints
             }
             catch (EntityValidationException ex)
             {
-                return Results.BadRequest(new {ex.errors});
+                return Results.ValidationProblem(ex.Errors);
             }
         }
     }

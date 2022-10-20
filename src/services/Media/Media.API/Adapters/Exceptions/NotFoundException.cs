@@ -1,3 +1,6 @@
 using System;
 
-public class NotFoundException : Exception { }
+namespace Media.API.Adapters.Exceptions
+{
+    public class NotFoundException : Exception { }
+}

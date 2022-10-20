@@ -5,6 +5,7 @@ namespace Media.API.Core
     using System.Threading;
     using System.Threading.Tasks;
     using Dapper;
+    using Exceptions;
 
     public record ListMediaResult(List<Media> Medias, string NextPageToken);
 
