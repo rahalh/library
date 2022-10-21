@@ -15,35 +15,17 @@ namespace Media.API.Adapters
         private readonly IMediaRepository repo;
         private readonly IDatabase redis;
 
+        // todo redis async op hangs, when no connection is available.
         public MediaRedisRepository(IConfiguration config, IMediaRepository repo)
         {
-            // todo configure expiration
             this.repo = repo;
-            this.redis = this.Connect(config.GetConnectionString("Redis"));
-        }
-
-        private IDatabase Connect(string connectionString)
-        {
-            try
-            {
-                return ConnectionMultiplexer.Connect(connectionString).GetDatabase();
-            }
-            catch (Exception ex)
-            {
-                Log.Debug(ex, typeof(MediaRedisRepository).FullName);
-                return null;
-            }
+            this.redis = ConnectionMultiplexer.Connect(config.GetConnectionString("Redis")).GetDatabase();
         }
 
         public async Task Save(Media media, CancellationToken token) => await this.repo.Save(media, token);
 
         public async Task<Media> FetchByID(string id, CancellationToken token)
         {
-            if (this.redis is null)
-            {
-                return await this.repo.FetchByID(id, token);
-            }
-
             var cachedData = await this.GetValueAsync<Media>(this.redis, $"media:{id}");
             if (cachedData is not null)
             {
@@ -58,11 +40,6 @@ namespace Media.API.Adapters
         public async Task Remove(string id, CancellationToken token)
         {
             await this.repo.Remove(id, token);
-            if (this.redis is null)
-            {
-                return;
-            }
-
             this.redis.KeyDelete($"media:{id}", flags: CommandFlags.FireAndForget);
         }
 
@@ -72,11 +49,6 @@ namespace Media.API.Adapters
         public async Task IncrementViewCount(string id, CancellationToken token)
         {
             await this.repo.IncrementViewCount(id, token);
-
-            if (this.redis is null)
-            {
-                return;
-            }
 
             var media = await this.GetValueAsync<Media>(this.redis, $"media:{id}");
             if (media is not null)
@@ -96,7 +68,7 @@ namespace Media.API.Adapters
             }
             catch (Exception ex)
             {
-                Log.Debug(ex, typeof(MediaRedisRepository).FullName);
+                Log.Error(ex, typeof(MediaRedisRepository).FullName);
                 return default;
             }
         }

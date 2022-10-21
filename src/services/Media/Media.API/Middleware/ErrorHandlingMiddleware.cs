@@ -27,7 +27,7 @@ namespace Media.API.Middleware
 
         private static Task HandleExceptionAsync(HttpContext ctx, Exception ex)
         {
-            Log.Error(ex, "An unhandled error");
+            Log.Error(ex, typeof(ErrorHandlingMiddleware).FullName);
             return ctx.Response.WriteAsJsonAsync(new ProblemDetails()
             {
                 Status = (int)HttpStatusCode.InternalServerError,
