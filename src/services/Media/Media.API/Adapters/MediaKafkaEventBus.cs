@@ -3,31 +3,25 @@ namespace Media.API.Adapters
     using System.Text.Json;
     using System.Threading.Tasks;
     using Confluent.Kafka;
-    using Confluent.SchemaRegistry.Serdes;
     using Core;
     using Microsoft.Extensions.Configuration;
-    using Serilog;
 
-    public class MediaKafkaEvent : IMediaEvent
+    public class MediaKafkaEventBus : IMediaEventBus
     {
         // todo use polly circuit breaker
-        // todo why is circuit breaker not used with redis ?
         private readonly IProducer<Null, string> producer;
-        private readonly ILogger logger;
 
-        public MediaKafkaEvent(ILogger logger, IConfiguration config)
+        public MediaKafkaEventBus(IConfiguration config)
         {
-            this.logger = logger.ForContext<MediaKafkaEvent>();
-            var pconfig = new ProducerConfig()
+            var producerConfig = new ProducerConfig()
             {
                 BootstrapServers = config.GetConnectionString("Kafka")
             };
-            this.producer = new ProducerBuilder<Null, string>(pconfig).Build();
+            this.producer = new ProducerBuilder<Null, string>(producerConfig).Build();
         }
 
         public async Task Removed(string id)
         {
-            // todo don't log anything here
             var topic = $"kafka://{ProducedEventType.MediaRemoved}";
             var message = new MediaEvent(
                 new MediaEventMetadata(id, EventType.EventDomain),

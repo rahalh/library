@@ -1,0 +1,65 @@
+[33mcommit 8138b558f9b8b244e243298de2ae2bad7f551ea8[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m
+Author: rahalh <hamzarahal031@gmail.com>
+Date:   Thu Oct 20 19:22:56 2022 +0100
+
+    refactors mediaRepo by using decorator that adds caching layer
+
+[33mcommit 4485b8bc0ea104bf2a3905659b3fabfa5933e100[m
+Author: rahalh <hamzarahal031@gmail.com>
+Date:   Thu Oct 20 14:04:52 2022 +0100
+
+    adds dockerfile and updates docker-compose
+
+[33mcommit cc134badce5e15738bd1d53130817e63a9443a71[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: rahalh <hamzarahal031@gmail.com>
+Date:   Thu Oct 20 10:31:08 2022 +0100
+
+    adds caching to repository using Redis
+
+[33mcommit 5095e29c7b063b44f3c04173f8aac0f4d8a2b11e[m
+Author: rahalh <hamzarahal031@gmail.com>
+Date:   Thu Oct 20 05:29:28 2022 +0100
+
+    adds error handling middleware
+
+[33mcommit a27358ca2fb0a56ef27bd50fe837a11628838165[m
+Author: rahalh <hamzarahal031@gmail.com>
+Date:   Wed Oct 19 15:59:12 2022 +0100
+
+    fixes the 'List' service method
+
+[33mcommit 2e4a47545c48db8bf23dbe59ccc45d79569492d4[m
+Author: rahalh <hamzarahal031@gmail.com>
+Date:   Wed Oct 19 15:13:06 2022 +0100
+
+    refactors the 'List' service method
+
+[33mcommit 0804a78b2dbf88a97692be14dfa65dae85cbb528[m
+Author: rahalh <hamzarahal031@gmail.com>
+Date:   Wed Oct 19 14:45:49 2022 +0100
+
+    adds List endpoint and total views incrementation
+
+[33mcommit 2dda31f3ca7c372a01637b9185dbed1693ce99d5[m
+Author: rahalh <hamzarahal031@gmail.com>
+Date:   Wed Oct 19 10:54:51 2022 +0100
+
+    adds cancellation tokens
+
+[33mcommit ab88457628a870d89e1abeb5e2ec204a0a77a9f6[m
+Author: rahalh <hamzarahal031@gmail.com>
+Date:   Wed Oct 19 10:15:09 2022 +0100
+
+    sets the media microservices structure and builds media REST API
+
+[33mcommit 5f3dfef7c72d30549ad50034e132b96fa3871b5a[m
+Author: rahalh <hamzarahal031@gmail.com>
+Date:   Wed Oct 19 10:12:31 2022 +0100
+
+    adds .gitignore
+
+[33mcommit a627d646d106ea277296ce56d8d9265b8c8277b5[m
+Author: Rahal Hamza <43707351+rahalh@users.noreply.github.com>
+Date:   Tue Oct 11 09:37:49 2022 +0100
+
+    Initial commit

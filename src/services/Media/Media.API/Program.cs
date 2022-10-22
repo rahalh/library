@@ -7,18 +7,18 @@ using Microsoft.Extensions.DependencyInjection;
 using Media.API.Ports.HTTP;
 using Media.API.Ports.HTTP.Handlers;
 using Serilog;
-using Serilog.Formatting.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console(new JsonFormatter())
-    .MinimumLevel.Debug()
+    .ReadFrom.Configuration(builder.Configuration)
     .CreateLogger();
 
-builder.Services.AddSingleton<IMediaService, MediaService>();
 builder.Services.AddSingleton<IMediaRepository, MediaPgRepository>();
+builder.Services.AddSingleton<IMediaEventBus, MediaKafkaEventBus>();
 builder.Services.Decorate<IMediaRepository, MediaRedisRepository>();
+builder.Services.AddSingleton<IMediaService, MediaService>();
+builder.Services.AddSingleton(Log.Logger);
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreateRequest>();
 

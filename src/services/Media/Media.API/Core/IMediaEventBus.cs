@@ -14,7 +14,7 @@ namespace Media.API.Core
         public static readonly string BlobRemoved = "MEDIA_BLOB_REMOVED";
     }
 
-    public interface IMediaEvent
+    public interface IMediaEventBus
     {
         public Task Removed(string id);
         public Task BlobFailed(string msg);

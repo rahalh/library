@@ -14,12 +14,14 @@ namespace Media.API.Adapters
     {
         private readonly IMediaRepository repo;
         private readonly IDatabase redis;
+        private readonly ILogger logger;
 
         // todo redis async op hangs, when no connection is available.
-        public MediaRedisRepository(IConfiguration config, IMediaRepository repo)
+        public MediaRedisRepository(ILogger logger, IConfiguration config, IMediaRepository repo)
         {
             this.repo = repo;
             this.redis = ConnectionMultiplexer.Connect(config.GetConnectionString("Redis")).GetDatabase();
+            this.logger = logger.ForContext<MediaRedisRepository>();
         }
 
         public async Task Save(Media media, CancellationToken token) => await this.repo.Save(media, token);
@@ -68,7 +70,7 @@ namespace Media.API.Adapters
             }
             catch (Exception ex)
             {
-                Log.Error(ex, typeof(MediaRedisRepository).FullName);
+                Log.Error(ex, ex.Message);
                 return default;
             }
         }
