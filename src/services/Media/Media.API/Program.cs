@@ -10,6 +10,8 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// todo add config validation
+// todo use separate config files
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .CreateLogger();
@@ -30,3 +32,5 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 app.MapMediaEndpoints();
 
 app.Run();
+
+public partial class Program { }

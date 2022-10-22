@@ -5,10 +5,11 @@ namespace Media.API.Ports.HTTP.Handlers
     using System.Threading.Tasks;
     using Core;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
 
     public record ListRequest(
         string PageToken,
-        int PageSize
+        int? PageSize
     );
 
     public record ListResponse(

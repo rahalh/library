@@ -70,7 +70,7 @@ namespace Media.API.Adapters
             }
             catch (Exception ex)
             {
-                Log.Error(ex, ex.Message);
+                this.logger.Error(ex, ex.Message);
                 return default;
             }
         }

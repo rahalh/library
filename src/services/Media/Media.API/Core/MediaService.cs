@@ -72,8 +72,7 @@ namespace Media.API.Core
 
         public async Task<ListMediaResult> List(PaginationParams parameters, CancellationToken token)
         {
-            parameters.Size++;
-            var medias = await this.repo.List(parameters, token);
+            var medias = await this.repo.List(new PaginationParams(parameters.Token, parameters.Size + 1), token);
             string nextToken = null;
             if (medias.Count > parameters.Size)
             {

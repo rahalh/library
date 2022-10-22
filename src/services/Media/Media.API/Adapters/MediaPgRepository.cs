@@ -13,7 +13,8 @@ namespace Media.API.Adapters
     {
         private readonly string connectionString;
 
-        public MediaPgRepository(IConfiguration config) => this.connectionString = config.GetConnectionString("PostgreSQL");
+        public MediaPgRepository(IConfiguration config) =>
+            this.connectionString = config.GetConnectionString("PostgreSQL");
 
         public async Task Save(Media media, CancellationToken token)
         {
