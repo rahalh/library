@@ -7,14 +7,16 @@ namespace Media.Test
 
     public class ApiWebApplicationFactory : WebApplicationFactory<Program>
     {
+        public IConfiguration Config { get; private set; }
+
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureAppConfiguration(config =>
             {
-                // var c = config
-                //     .AddJsonFile("integrationsettings.json")
-                //     .Build();
-                // config.AddConfiguration(c);
+                this.Config = new ConfigurationBuilder()
+                    .AddJsonFile("integrationsettings.json")
+                    .Build();
+                config.AddConfiguration(this.Config);
             });
 
             builder.ConfigureTestServices(services => { });
