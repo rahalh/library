@@ -38,7 +38,7 @@ namespace Media.API.Core
                 .GreaterThanOrEqualTo(0)
                 .NotNull();
 
-            this.RuleFor(x => x.ExternalID).NotNull();
+            this.RuleFor(x => x.ExternalId).NotNull();
         }
     }
 }

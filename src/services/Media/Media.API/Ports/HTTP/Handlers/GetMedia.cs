@@ -12,7 +12,7 @@ namespace Media.API.Ports.HTTP.Handlers
         {
             try
             {
-                var media = await srv.Get(id, token);
+                var media = await srv.GetById(id, token);
                 return Results.Ok(media);
             }
             catch (NotFoundException _)

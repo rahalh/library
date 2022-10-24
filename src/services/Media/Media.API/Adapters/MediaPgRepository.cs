@@ -25,7 +25,7 @@ namespace Media.API.Adapters
                 connection);
             command.Parameters.AddRange(new NpgsqlParameter[]
             {
-                new("externalId", media.ExternalID), new("title", media.Title),
+                new("externalId", media.ExternalId), new("title", media.Title),
                 new("description", media.Description), new("languageCode", media.LanguageCode),
                 new("publishDate", media.PublishDate),
                 new("mediaType", media.MediaType) {DataTypeName = "media_enum"},
@@ -45,7 +45,7 @@ namespace Media.API.Adapters
             }
         }
 
-        public async Task<Media> FetchByID(string id, CancellationToken token)
+        public async Task<Media> FetchById(string id, CancellationToken token)
         {
             await using var connection = new NpgsqlConnection(this.connectionString);
             var query = @"
@@ -101,11 +101,21 @@ namespace Media.API.Adapters
             return res.AsList();
         }
 
-        public async Task IncrementViewCount(string id, CancellationToken token)
+        public Task IncrementViewCount(string id, CancellationToken token) =>
+            throw new System.NotImplementedException();
+
+        public async Task IncremenTViewCount(string id, CancellationToken token)
         {
             await using var connection = new NpgsqlConnection(this.connectionString);
             var command = @"update media set total_views = total_views + 1 where external_id = @id";
             await connection.ExecuteAsync(new CommandDefinition(command, new {id}, cancellationToken: token));
+        }
+
+        public async Task SetContentURL(string id, string url, CancellationToken token)
+        {
+            await using var connection = new NpgsqlConnection(this.connectionString);
+            var command = @"update media set content_url = @url where external_id = @id";
+            await connection.ExecuteAsync(new CommandDefinition(command, new {id, url}, cancellationToken: token));
         }
     }
 }

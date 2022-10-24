@@ -37,9 +37,9 @@ namespace Media.API.Core
             return media;
         }
 
-        public async Task<Media> Get(string id, CancellationToken token)
+        public async Task<Media> GetById(string id, CancellationToken token)
         {
-            var media = await this.repo.FetchByID(id, token);
+            var media = await this.repo.FetchById(id, token);
             if (media is not null)
             {
                 await this.repo.IncrementViewCount(id, token);
@@ -54,7 +54,7 @@ namespace Media.API.Core
             await this.repo.Remove(id, token);
             try
             {
-                await this.eventBus.Removed(id);
+                await this.eventBus.PublishAsync(ProducedEventType.MediaRemoved, id);
                 this.logger
                     .ForContext("eventType", ProducedEventType.MediaRemoved)
                     .Information("Event published");
@@ -65,7 +65,7 @@ namespace Media.API.Core
                 this.logger.Error(ex, ex.Message);
                 this.logger
                     .ForContext("eventType", ProducedEventType.MediaRemoved)
-                    .Information("Failed to publish event");
+                    .Information("Failed to publish the event");
                 throw;
             }
         }
@@ -76,11 +76,13 @@ namespace Media.API.Core
             string nextToken = null;
             if (medias.Count > parameters.Size)
             {
-                nextToken = medias.LastOrDefault()?.ExternalID;
+                nextToken = medias.LastOrDefault()?.ExternalId;
                 medias = medias.SkipLast(1).AsList();
             }
 
             return new ListMediaResult(medias, nextToken);
         }
+
+        public async Task SetContentURL(string id, string url, CancellationToken token) => await this.repo.SetContentURL(id, url, token);
     }
 }

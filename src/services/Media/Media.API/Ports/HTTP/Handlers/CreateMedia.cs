@@ -3,6 +3,7 @@ namespace Media.API.Ports.HTTP.Handlers
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using Adapters.Exceptions;
     using Core;
     using Core.Exceptions;
     using Microsoft.AspNetCore.Http;
@@ -21,17 +22,19 @@ namespace Media.API.Ports.HTTP.Handlers
         {
             try
             {
-                var author = await srv.Create(new Media
-                {
-                    Title = req.Title,
-                    Description = req.Description,
-                    PublishDate = req.PublishDate
-                }, token);
+                var author =
+                    await srv.Create(
+                        new Media {Title = req.Title, Description = req.Description, PublishDate = req.PublishDate},
+                        token);
                 return Results.Ok(author);
             }
             catch (EntityValidationException ex)
             {
                 return Results.ValidationProblem(ex.Errors);
+            }
+            catch (EntityExistsException ex)
+            {
+                return Results.Conflict();
             }
         }
     }

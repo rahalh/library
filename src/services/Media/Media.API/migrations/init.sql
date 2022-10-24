@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS media(
 	create_time 	timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	update_time 	timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	total_views     bigint DEFAULT 0,
+	content_url     text DEFAULT NULL,
 	status          state_enum NOT NULL DEFAULT 'STATUS_PENDING',
 	PRIMARY KEY(id, external_id)
 );

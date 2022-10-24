@@ -26,7 +26,7 @@ namespace Media.API.Adapters
 
         public async Task Save(Media media, CancellationToken token) => await this.repo.Save(media, token);
 
-        public async Task<Media> FetchByID(string id, CancellationToken token)
+        public async Task<Media> FetchById(string id, CancellationToken token)
         {
             var cachedData = await this.GetValueAsync<Media>(this.redis, $"media:{id}");
             if (cachedData is not null)
@@ -34,7 +34,7 @@ namespace Media.API.Adapters
                 return cachedData;
             }
 
-            var media = await this.repo.FetchByID(id, token);
+            var media = await this.repo.FetchById(id, token);
             this.redis.StringSet($"media:{id}", JsonSerializer.Serialize(media), flags: CommandFlags.FireAndForget);
             return media;
         }
@@ -56,6 +56,18 @@ namespace Media.API.Adapters
             if (media is not null)
             {
                 media.TotalViews++;
+                this.redis.StringSet($"media:{id}", JsonSerializer.Serialize(media), flags: CommandFlags.FireAndForget);
+            }
+        }
+
+        public async Task SetContentURL(string id, string url, CancellationToken token)
+        {
+            await this.repo.SetContentURL(id, url, token);
+
+            var media = await this.GetValueAsync<Media>(this.redis, $"media:{id}");
+            if (media is not null)
+            {
+                media.ContentURL = url;
                 this.redis.StringSet($"media:{id}", JsonSerializer.Serialize(media), flags: CommandFlags.FireAndForget);
             }
         }

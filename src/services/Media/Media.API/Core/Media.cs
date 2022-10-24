@@ -19,17 +19,17 @@ namespace Media.API.Core
     public class Media
     {
         [JsonIgnore]
-        public int ID { get; set; } = 0;
-        public string ExternalID { get; set; } = Nanoid.Nanoid.Generate();
+        public int Id { get; set; } = 0;
+        public string ExternalId { get; set; } = Nanoid.Nanoid.Generate();
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime PublishDate { get; set; }
         public string LanguageCode { get; set; } = "en";
-        // TODO fix me
         public string MediaType { get; set; } = global::Media.API.Core.MediaType.MediaBook;
-        public int TotalViews { get; set; } = 0;
+        public int TotalViews { get; set; }
         public DateTime CreateTime { get; set; } = DateTime.Now;
         public DateTime UpdateTime { get; set; } = DateTime.Now;
+        public string ContentURL { get; set; }
         public string Status { get; set; } = global::Media.API.Core.Status.StatusPending;
     }
 }

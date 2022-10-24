@@ -4,19 +4,18 @@ namespace Media.API.Core
 
     public static class ProducedEventType
     {
-        public static readonly string MediaRemoved = "MEDIA_REMOVED";
-        public static readonly string BlobFailed = "BLOB_FAILED";
+        public const string MediaRemoved = "MEDIA_REMOVED";
+        public const string BlobFailed = "BLOB_FAILED";
     }
 
     public static class ConsumedEventType
     {
-        public static readonly string BlobUploaded = "MEDIA_BLOB_UPLOADED";
-        public static readonly string BlobRemoved = "MEDIA_BLOB_REMOVED";
+        public const string BlobUploaded = "MEDIA_BLOB_UPLOADED";
+        public const string BlobRemoved = "MEDIA_BLOB_REMOVED";
     }
 
     public interface IMediaEventBus
     {
-        public Task Removed(string id);
-        public Task BlobFailed(string msg);
+        public Task PublishAsync(string eventType, string eventContent);
     }
 }

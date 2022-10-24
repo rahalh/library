@@ -1,4 +1,4 @@
-namespace Media.API.Adapters
+namespace Media.API.Adapters.Kafka.Producer
 {
     using System.Text.Json;
     using System.Threading.Tasks;
@@ -8,7 +8,6 @@ namespace Media.API.Adapters
 
     public class MediaKafkaEventBus : IMediaEventBus
     {
-        // todo use polly circuit breaker
         private readonly IProducer<Null, string> producer;
 
         public MediaKafkaEventBus(IConfiguration config)
@@ -20,20 +19,13 @@ namespace Media.API.Adapters
             this.producer = new ProducerBuilder<Null, string>(producerConfig).Build();
         }
 
-        public async Task Removed(string id)
+        public async Task PublishAsync(string eventType, string eventContent)
         {
-            var topic = $"kafka://{ProducedEventType.MediaRemoved}";
+            var topic = eventType;
             var message = new MediaEvent(
-                new MediaEventMetadata(id, EventType.EventDomain),
-                id
+                new MediaEventMetadata(EventType.EventDomain),
+                eventContent
             );
-            await this.producer.ProduceAsync(topic, new Message<Null, string>() { Value = JsonSerializer.Serialize(message) });
-        }
-
-        public async Task BlobFailed(string msg)
-        {
-            var topic = $"kafka://{ProducedEventType.BlobFailed}";
-            var message = ""; // fixme
             await this.producer.ProduceAsync(topic, new Message<Null, string>() { Value = JsonSerializer.Serialize(message) });
         }
     }
