@@ -23,8 +23,8 @@ namespace Blob.API.Ports.HTTP.Handlers
             var blobType = contentType[0];
             var extension = contentType[1];
             var size = file.Length;
-            var storageDomain = config.GetSection("AWS").GetSection("S3").GetValue<string>("StorageDomain");
-            var storagePath = config.GetSection("AWS").GetSection("S3").GetValue<string>("StoragePath");
+            var storageDomain = config["AWS:S3:StorageDomain"];
+            var storagePath = config["AWS:S3:Prefix"];
 
             var stream = file.OpenReadStream();
             try

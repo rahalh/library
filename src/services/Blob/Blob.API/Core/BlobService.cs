@@ -26,15 +26,16 @@ namespace Blob.API.Core
                 throw new EntityValidationException(validationResult.ToDictionary());
             }
 
-            // todo save to repo
-            // todo save to file store
+            await this.fileStore.StoreAsync(blob.Name, stream, token);
+            await this.repo.SaveAsync(blob ,token);
+            // todo publish event (blob_uploaded)
             return blob;
         }
 
         public async Task DeleteAsync(string id, CancellationToken token)
         {
-            // todo delete from repo
-            // todo delete from file store as well
+            await this.fileStore.RemoveAsync(id, token);
+            await this.repo.RemoveAsync(id, token);
             // todo send this event to the media service
         }
     }

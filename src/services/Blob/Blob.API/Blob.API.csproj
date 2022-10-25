@@ -3,15 +3,15 @@
     <TargetFramework>net6.0</TargetFramework>
     <DebugType>portable</DebugType>
     <PreserveCompilationContext>true</PreserveCompilationContext>
-    <AssemblyName>Media.API</AssemblyName>
-    <PackageId>Media.API</PackageId>
+    <AssemblyName>Blob.API</AssemblyName>
+    <PackageId>Blob.API</PackageId>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateErrorForMissingTargetingPacks>false</GenerateErrorForMissingTargetingPacks>
     <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
   </PropertyGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Media.Test" />
+    <InternalsVisibleTo Include="Blob.Test" />
   </ItemGroup>
 
   <ItemGroup>

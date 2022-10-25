@@ -18,6 +18,7 @@ namespace Blob.API.Core
                 .NotNull()
                 .NotEmpty()
                 .Must(x => EnumUtils.TryParseWithMemberName<BlobTypes>(x, out _))
+                .WithErrorCode("unsupported blob type")
                 .When(x => !string.IsNullOrEmpty(x.BlobType));
 
             this.RuleFor(x => x.Extension)
