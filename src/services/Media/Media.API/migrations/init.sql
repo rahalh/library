@@ -2,9 +2,9 @@ CREATE DATABASE media;
 \c media
 
 CREATE TYPE media_enum AS ENUM(
-	'MEDIA_BOOK',
-	'MEDIA_PODCAST',
-	'MEDIA_VIDEO'
+	'BOOK',
+	'PODCAST',
+	'VIDEO'
 );
 
 CREATE TYPE state_enum AS ENUM(
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS media(
     title 			varchar(255) NOT NULL UNIQUE,
     description 	text DEFAULT NULL,
     language_code   varchar(5) NOT NULL DEFAULT 'en',
-	media_type		media_enum NOT NULL DEFAULT 'MEDIA_BOOK',
+	media_type		media_enum NOT NULL DEFAULT 'BOOK',
     publish_date 	date NOT NULL DEFAULT CURRENT_DATE,
 	create_time 	timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	update_time 	timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

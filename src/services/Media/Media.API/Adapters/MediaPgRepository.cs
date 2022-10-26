@@ -21,7 +21,22 @@ namespace Media.API.Adapters
             await using var connection = new NpgsqlConnection(this.connectionString);
             await connection.OpenAsync(token);
             using var command = new NpgsqlCommand(@"
-                insert into media(external_id, title, description, language_code, publish_date, media_type) values (@externalId, @title, @description, @languageCode, @publishDate, @mediaType)",
+                insert into media(
+                    external_id,
+                    title,
+                    description,
+                    language_code,
+                    publish_date,
+                    media_type
+                ) values
+                (
+                    @externalId,
+                    @title,
+                    @description,
+                    @languageCode,
+                    @publishDate,
+                    @mediaType
+                )",
                 connection);
             command.Parameters.AddRange(new NpgsqlParameter[]
             {

@@ -22,10 +22,7 @@ namespace Media.API.Ports.HTTP.Handlers
         {
             try
             {
-                var author =
-                    await srv.Create(
-                        new Media {Title = req.Title, Description = req.Description, PublishDate = req.PublishDate},
-                        token);
+                var author = await srv.Create(new Media(req.Title, req.Description, req.PublishDate, req.MediaType), token);
                 return Results.Ok(author);
             }
             catch (EntityValidationException ex)

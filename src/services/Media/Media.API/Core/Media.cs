@@ -1,7 +1,7 @@
 namespace Media.API.Core
 {
     using System;
-    using System.Text.Json.Serialization;
+    using Nanoid;
 
     public static class Status
     {
@@ -9,27 +9,37 @@ namespace Media.API.Core
         public static readonly string StatusDone = "STATUS_DONE";
     }
 
-    public static class MediaType
+    public enum MediaType
     {
-        public static readonly string MediaBook = "MEDIA_BOOK";
-        public static readonly string MediaVideo = "MEDIA_VIDEO";
-        public static readonly string MediaPodcast = "MEDIA_PODCAST";
+        Book,
+        Video,
+        Podcast
     }
 
     public class Media
     {
-        [JsonIgnore]
-        public int Id { get; set; } = 0;
-        public string ExternalId { get; set; } = Nanoid.Nanoid.Generate();
+        public int Id { get; }
+        public string ExternalId { get; }
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime PublishDate { get; set; }
         public string LanguageCode { get; set; } = "en";
-        public string MediaType { get; set; } = global::Media.API.Core.MediaType.MediaBook;
+        public string MediaType { get; set; }
         public int TotalViews { get; set; }
-        public DateTime CreateTime { get; set; } = DateTime.Now;
-        public DateTime UpdateTime { get; set; } = DateTime.Now;
+        public DateTime CreateTime { get; set; }
+        public DateTime UpdateTime { get; set; }
         public string ContentURL { get; set; }
-        public string Status { get; set; } = global::Media.API.Core.Status.StatusPending;
+        public string Status { get; set; }
+
+        public Media(string title, string description, DateTime publishDate, string mediaType)
+        {
+            this.Title = title;
+            this.Description = description;
+            this.PublishDate = publishDate;
+            this.MediaType = mediaType;
+            this.ExternalId = Nanoid.Generate();
+            this.CreateTime = DateTime.UtcNow;
+            this.UpdateTime = DateTime.UtcNow;
+        }
     }
 }

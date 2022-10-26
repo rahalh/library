@@ -2,6 +2,8 @@ using FluentValidation;
 
 namespace Media.API.Core
 {
+    using Helpers;
+
     public class MediaValidator : AbstractValidator<Media>
     {
         public MediaValidator()
@@ -19,18 +21,16 @@ namespace Media.API.Core
             this.RuleFor(x => x.PublishDate).NotNull();
 
             this.RuleFor(x => x.MediaType)
-                .Must(x =>
-                    x == MediaType.MediaBook ||
-                    x == MediaType.MediaPodcast ||
-                    x == MediaType.MediaVideo
-                )
-                .NotNull();
+                .NotNull()
+                .NotEmpty()
+                .Must(x => EnumUtils.TryParseWithMemberName<MediaType>(x, out _))
+                .WithErrorCode("unsupported media type")
+                .When(x => !string.IsNullOrEmpty(x.MediaType));
 
             this.RuleFor(x => x.Status)
                 .Must(x =>
                     x == Status.StatusDone ||
-                    x == Status.StatusPending
-                )
+                    x == Status.StatusPending)
                 .NotNull();
 
             // TODO LanguageCode validation rules
