@@ -22,8 +22,9 @@ namespace Media.API.Ports.HTTP.Handlers
         {
             try
             {
-                var author = await srv.Create(new Media(req.Title, req.Description, req.PublishDate, req.MediaType), token);
-                return Results.Ok(author);
+                var media = await srv.Create(new Media(req.Title, req.Description, req.PublishDate, req.MediaType),
+                    token);
+                return Results.CreatedAtRoute("GetMedia", new {id = media.ExternalId}, media);
             }
             catch (EntityValidationException ex)
             {

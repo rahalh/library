@@ -3,18 +3,19 @@ namespace Media.API.Adapters
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Config;
     using Dapper;
     using Exceptions;
     using Media.API.Core;
     using Microsoft.Extensions.Configuration;
     using Npgsql;
+    using NpgsqlTypes;
 
     public class MediaPgRepository : IMediaRepository
     {
         private readonly string connectionString;
 
-        public MediaPgRepository(IConfiguration config) =>
-            this.connectionString = config.GetConnectionString("PostgreSQL");
+        public MediaPgRepository(PostgresqlSettings settings) => this.connectionString = settings.ConnectionString;
 
         public async Task Save(Media media, CancellationToken token)
         {
@@ -73,15 +74,11 @@ namespace Media.API.Adapters
                 media_type as MediaType,
                 create_time as CreateTime,
                 update_time as UpdateTime,
-                total_views as TotalViews
+                total_views as TotalViews,
+                content_url as ContentURL
                 from media where external_id = @id";
             var res = await connection.QueryFirstOrDefaultAsync<Media>(new CommandDefinition(query, new {id},
                 cancellationToken: token));
-            if (res is null)
-            {
-                throw new NotFoundException();
-            }
-
             return res;
         }
 
@@ -105,25 +102,23 @@ namespace Media.API.Adapters
                 media_type as MediaType,
                 create_time as CreateTime,
                 update_time as UpdateTime,
-                total_views as TotalViews
+                total_views as TotalViews,
+                content_url as ContentURL
                 from media
-                where @token is null or external_id >= @token
-                order by total_views desc
+                where @token is null or update_time <= (select update_time from media where external_id = @token)
+                order by update_time desc
                 fetch first @size rows only";
 
             var res = await connection.QueryAsync<Media>(new CommandDefinition(query,
-                new {token = parameters.Token, size = parameters.Size}, cancellationToken: token));
+                new {parameters.Token, parameters.Size}, cancellationToken: token));
             return res.AsList();
         }
 
-        public Task IncrementViewCount(string id, CancellationToken token) =>
-            throw new System.NotImplementedException();
-
-        public async Task IncremenTViewCount(string id, CancellationToken token)
+        public async Task SetViewCount(string id, int viewCount, CancellationToken token)
         {
             await using var connection = new NpgsqlConnection(this.connectionString);
-            var command = @"update media set total_views = total_views + 1 where external_id = @id";
-            await connection.ExecuteAsync(new CommandDefinition(command, new {id}, cancellationToken: token));
+            var command = @"update media set total_views = @viewCount where external_id = @id";
+            await connection.ExecuteAsync(new CommandDefinition(command, new {id, viewCount}, cancellationToken: token));
         }
 
         public async Task SetContentURL(string id, string url, CancellationToken token)

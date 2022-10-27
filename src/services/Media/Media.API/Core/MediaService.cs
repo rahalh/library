@@ -6,6 +6,7 @@ namespace Media.API.Core
     using System.Threading;
     using System.Threading.Tasks;
     using System.Transactions;
+    using Adapters.Exceptions;
     using Dapper;
     using Exceptions;
     using Serilog;
@@ -40,11 +41,12 @@ namespace Media.API.Core
         public async Task<Media> GetById(string id, CancellationToken token)
         {
             var media = await this.repo.FetchById(id, token);
-            if (media is not null)
+            if (media is null)
             {
-                await this.repo.IncrementViewCount(id, token);
-                media.TotalViews++;
+                throw new NotFoundException();
             }
+            media.TotalViews += 1;
+            await this.repo.SetViewCount(id, media.TotalViews, token);
             return media;
         }
 

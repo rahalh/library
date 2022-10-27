@@ -13,7 +13,7 @@ namespace Media.API.Ports.HTTP.Handlers
     );
 
     public record ListResponse(
-        List<Media> Medias,
+        List<Media> Items,
         string NextPageToken
     );
 

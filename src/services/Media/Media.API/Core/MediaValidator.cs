@@ -29,8 +29,8 @@ namespace Media.API.Core
 
             this.RuleFor(x => x.Status)
                 .Must(x =>
-                    x == Status.StatusDone ||
-                    x == Status.StatusPending)
+                    x == StatusEnum.StatusDone ||
+                    x == StatusEnum.StatusPending)
                 .NotNull();
 
             // TODO LanguageCode validation rules
