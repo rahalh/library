@@ -139,7 +139,7 @@ namespace Media.Test.IntegrationTests
             createdMedia.TotalViews.ShouldBe(0);
             createdMedia.Title.ShouldBe(media.Title);
             createdMedia.Description.ShouldBe(media.Description);
-            createdMedia.MediaType.ShouldBe(media.MediaType);
+            createdMedia.MediaType.ShouldBe(media.MediaType, StringCompareShould.IgnoreCase);
             createdMedia.PublishDate.ShouldBe(media.PublishDate);
         }
 

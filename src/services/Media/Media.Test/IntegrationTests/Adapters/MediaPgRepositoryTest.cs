@@ -1,4 +1,4 @@
-namespace Media.Test.IntegrationTests
+namespace Media.Test.IntegrationTests.Adapters
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -8,7 +8,7 @@ namespace Media.Test.IntegrationTests
     using API.Config;
     using API.Core;
     using AutoFixture;
-    using Helpers;
+    using IntegrationTests.Helpers;
     using Shouldly;
     using TestContainers;
     using Xunit;
@@ -133,7 +133,7 @@ namespace Media.Test.IntegrationTests
             // Arrange
             var fixture = new Fixture();
             var media = fixture.Create<Media>();
-            media.MediaType = "Book";
+            media.MediaType = "BOOK";
             media.LanguageCode = "en";
 
             // Act

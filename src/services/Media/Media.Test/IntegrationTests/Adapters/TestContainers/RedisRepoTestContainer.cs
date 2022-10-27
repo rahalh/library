@@ -1,4 +1,4 @@
-namespace Media.Test.IntegrationTests.TestContainers
+namespace Media.Test.IntegrationTests.Adapters.TestContainers
 {
     using System.Threading.Tasks;
     using DotNet.Testcontainers.Builders;

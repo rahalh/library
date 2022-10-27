@@ -1,4 +1,4 @@
-namespace Media.Test
+namespace Media.Test.IntegrationTests
 {
     using System.Threading.Tasks;
     using DotNet.Testcontainers.Builders;
@@ -35,7 +35,7 @@ namespace Media.Test
             builder.ConfigureAppConfiguration(config =>
             {
                 var c = new ConfigurationBuilder()
-                    .AddJsonFile("integrationsettings.json")
+                    .AddJsonFile("IntegrationTests/integrationsettings.json")
                     .Build();
                 config.AddConfiguration(c);
             });

@@ -1,4 +1,4 @@
-namespace Media.Test.IntegrationTests.Adapters.Helpers
+namespace Media.Test.IntegrationTests.Helpers
 {
     using StackExchange.Redis;
 

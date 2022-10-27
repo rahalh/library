@@ -1,4 +1,4 @@
-namespace Media.Test.IntegrationTests
+namespace Media.Test.IntegrationTests.Adapters
 {
     using System.Threading;
     using System.Threading.Tasks;
@@ -6,7 +6,7 @@ namespace Media.Test.IntegrationTests
     using API.Config;
     using API.Core;
     using AutoFixture;
-    using Helpers;
+    using IntegrationTests.Helpers;
     using Serilog;
     using Shouldly;
     using StackExchange.Redis;
