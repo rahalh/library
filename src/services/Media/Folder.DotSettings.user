@@ -1,10 +1,10 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7adffaf7_002Dd1de_002D449a_002Da1dd_002D78bbc8b85af5/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ListMediaTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7adffaf7_002Dd1de_002D449a_002Da1dd_002D78bbc8b85af5/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ListMediaTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;xUnit::1F4E301C-F03B-4A31-A6F2-6A77384A74DA::net6.0::Media.Test.ListMediaTest&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=eb857d27_002D8299_002D40c4_002Db93f_002D45a5cac39fa3/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="MediaListEndpointTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=eb857d27_002D8299_002D40c4_002Db93f_002D45a5cac39fa3/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="MediaListEndpointTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;xUnit::1F4E301C-F03B-4A31-A6F2-6A77384A74DA::net6.0::Media.Test.ListMediaTest&lt;/TestId&gt;
   &lt;/TestAncestor&gt;

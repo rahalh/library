@@ -10,6 +10,7 @@
     <PackageReference Include="AutoFixture" Version="4.17.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.10" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
+    <PackageReference Include="Moq" Version="4.18.2" />
     <PackageReference Include="Respawn.Postgres" Version="1.0.15" />
     <PackageReference Include="Shouldly" Version="4.1.0" />
     <PackageReference Include="Testcontainers" Version="2.2.0-beta.3311860540" />
@@ -20,9 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="IntegrationTests\Adapters\scripts\init.sql" />
-    <Content Include="IntegrationTests\integrationsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="IntegrationTests\Adapters\scripts\init.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

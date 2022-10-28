@@ -13,13 +13,13 @@ namespace Media.Test.IntegrationTests.Adapters
     using TestContainers;
     using Xunit;
 
-    public class MediaRedisRepositoryTest : IClassFixture<RedisRepoTestContainer>, IAsyncLifetime
+    public class MediaRedisRepositoryTest : IClassFixture<RedisPgTestContainer>, IAsyncLifetime
     {
         private readonly string pgConnectionString;
 
         private readonly MediaRedisRepository cache;
 
-        public MediaRedisRepositoryTest(RedisRepoTestContainer fixture)
+        public MediaRedisRepositoryTest(RedisPgTestContainer fixture)
         {
             this.pgConnectionString = fixture.PgConnectionString;
 

@@ -1,12 +1,16 @@
 namespace Media.Test.IntegrationTests
 {
+    using System;
     using System.Threading.Tasks;
+    using API.Config;
     using DotNet.Testcontainers.Builders;
     using DotNet.Testcontainers.Configurations;
     using DotNet.Testcontainers.Containers;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc.Testing;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using StackExchange.Redis;
     using Xunit;
 
     public class IntegrationTestFactory : WebApplicationFactory<Program>, IAsyncLifetime
@@ -15,7 +19,7 @@ namespace Media.Test.IntegrationTests
             new TestcontainersBuilder<PostgreSqlTestcontainer>()
                 .WithDatabase(new PostgreSqlTestcontainerConfiguration
                 {
-                    Port = 5431, Database = "media", Username = "postgres", Password = "root",
+                    Port = Random.Shared.Next(4000, 5000), Database = "media", Username = "postgres", Password = "root",
                 })
                 .WithBindMount("/tmp/scripts/", "/docker-entrypoint-initdb.d/")
                 .Build();
@@ -24,7 +28,7 @@ namespace Media.Test.IntegrationTests
             new TestcontainersBuilder<RedisTestcontainer>()
                 .WithDatabase(new RedisTestcontainerConfiguration()
                 {
-                    Port = 6380
+                    Port = Random.Shared.Next(4000, 5000)
                 })
                 .Build();
 
@@ -32,12 +36,10 @@ namespace Media.Test.IntegrationTests
         public string RedisConnectionString => this.redisContainer.ConnectionString;
 
         protected override void ConfigureWebHost(IWebHostBuilder builder) =>
-            builder.ConfigureAppConfiguration(config =>
+            builder.ConfigureServices(services =>
             {
-                var c = new ConfigurationBuilder()
-                    .AddJsonFile("IntegrationTests/integrationsettings.json")
-                    .Build();
-                config.AddConfiguration(c);
+                services.AddSingleton(_ => new RedisSettings(this.RedisConnectionString));
+                services.AddSingleton(_ => new PostgresqlSettings(this.PgConnectionString));
             });
 
         public async Task InitializeAsync()

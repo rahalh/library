@@ -6,6 +6,6 @@ namespace Media.API.Config
     {
         public string ConnectionString { get; }
 
-        public RedisSettings(string connectionString) => this.ConnectionString = !string.IsNullOrEmpty(connectionString) ? connectionString : throw new ArgumentNullException("Redis connectionstring is missing");
+        public RedisSettings(string connectionString) => this.ConnectionString = !string.IsNullOrEmpty(connectionString) ? connectionString : throw new ArgumentNullException($"{nameof(ConnectionString)} is missing");
     }
 }

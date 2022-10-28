@@ -6,6 +6,6 @@ namespace Media.API.Config
     {
         public string ConnectionString { get; }
 
-        public PostgresqlSettings(string connectionString) => this.ConnectionString = !string.IsNullOrEmpty(connectionString) ? connectionString : throw new ArgumentNullException("PostgreSQL connectionstring is missing");
+        public PostgresqlSettings(string connectionString) => this.ConnectionString = string.IsNullOrEmpty(connectionString) ? throw new ArgumentNullException($"{nameof(ConnectionString)} is missing") : connectionString;
     }
 }

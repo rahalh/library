@@ -14,12 +14,12 @@ namespace Media.Test.IntegrationTests.Adapters
     using Xunit;
 
     // TODO parallel vs sequential execution
-    public class MediaPgRepositoryTest : IClassFixture<PgRepoTestContainer>, IAsyncLifetime
+    public class MediaPgRepositoryTest : IClassFixture<PgTestContainer>, IAsyncLifetime
     {
         private readonly string connectionString;
         private readonly MediaPgRepository repo;
 
-        public MediaPgRepositoryTest(PgRepoTestContainer fixture)
+        public MediaPgRepositoryTest(PgTestContainer fixture)
         {
             this.connectionString = fixture.ConnectionString;
             this.repo = new MediaPgRepository(new PostgresqlSettings(this.connectionString));

@@ -1,5 +1,7 @@
 namespace Media.Test.IntegrationTests.Adapters.TestContainers
 {
+    using System;
+    using System.IO;
     using System.Threading.Tasks;
     using DotNet.Testcontainers.Builders;
     using DotNet.Testcontainers.Configurations;
@@ -12,9 +14,9 @@ namespace Media.Test.IntegrationTests.Adapters.TestContainers
             new TestcontainersBuilder<PostgreSqlTestcontainer>()
                 .WithDatabase(new PostgreSqlTestcontainerConfiguration
                 {
-                    Port = 5431, Database = "media", Username = "postgres", Password = "root",
+                    Port = Random.Shared.Next(4000, 5000), Database = "media", Username = "postgres", Password = "root",
                 })
-                .WithBindMount("/tmp/scripts/", "/docker-entrypoint-initdb.d/")
+                .WithBindMount(ToAbsolute("./IntegrationTests/Adapters/scripts/"), "/docker-entrypoint-initdb.d/")
                 .Build();
 
         public string ConnectionString => this.testContainers.ConnectionString;
@@ -22,5 +24,7 @@ namespace Media.Test.IntegrationTests.Adapters.TestContainers
         public Task InitializeAsync() => this.testContainers.StartAsync();
 
         public Task DisposeAsync() => this.testContainers.DisposeAsync().AsTask();
+
+        private static string ToAbsolute(string path) => Path.GetFullPath(path);
     }
 }
