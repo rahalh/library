@@ -2,10 +2,12 @@ namespace Blob.API.Adapters
 {
     using System;
     using System.Collections.Generic;
+    using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
     using Amazon.DynamoDBv2;
     using Amazon.DynamoDBv2.Model;
+    using Config;
     using Core;
     using Microsoft.Extensions.Configuration;
 
@@ -14,10 +16,13 @@ namespace Blob.API.Adapters
         private readonly IAmazonDynamoDB ddbClient;
         private readonly string tableName;
 
-        public DDBRepository(IConfiguration config)
+        public DDBRepository(DDBSettings settings)
         {
-            this.tableName = config["AWS:DDB:TableName"];
-            this.ddbClient = new AmazonDynamoDBClient();
+            this.tableName = settings.TableName;
+            this.ddbClient = new AmazonDynamoDBClient(new AmazonDynamoDBConfig()
+            {
+                ServiceURL = settings.ServiceURL
+            });
         }
 
         public async Task<Blob> SaveAsync(Blob blob, CancellationToken token)
@@ -57,9 +62,14 @@ namespace Blob.API.Adapters
             var req = new GetItemRequest()
             {
                 TableName = this.tableName,
-                Key = new Dictionary<string, AttributeValue>() {{"Id", new AttributeValue() { S = id }}}
+                Key = new Dictionary<string, AttributeValue>() {{"Id", new AttributeValue { S = id }}}
             };
             var resp = await this.ddbClient.GetItemAsync(req, token);
+            if (resp.Item.Count == 0)
+            {
+                return null;
+            }
+
             return new Blob()
             {
                 Id = resp.Item["Id"].S,

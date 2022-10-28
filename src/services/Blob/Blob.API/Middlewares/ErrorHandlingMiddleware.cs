@@ -28,6 +28,7 @@ namespace Blob.API.Middlewares
         private static Task HandleExceptionAsync(HttpContext ctx, Exception ex)
         {
             Log.Error(ex, ex.Message);
+            ctx.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             return ctx.Response.WriteAsJsonAsync(new ProblemDetails()
             {
                 Status = (int)HttpStatusCode.InternalServerError,

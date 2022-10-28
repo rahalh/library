@@ -26,7 +26,7 @@ namespace Blob.API.Core
             this.Id = id;
             this.Name = $"{id}.{extension}";
             this.Size = size;
-            this.BlobType = blobType;
+            this.BlobType = Strings.UCase(blobType);
             this.Extension = Strings.LCase(extension);
             this.CreateTime = DateTime.UtcNow;
             this.UpdateTime = DateTime.UtcNow;

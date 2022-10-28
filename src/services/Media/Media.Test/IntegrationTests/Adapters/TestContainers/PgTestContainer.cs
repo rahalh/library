@@ -6,7 +6,7 @@ namespace Media.Test.IntegrationTests.Adapters.TestContainers
     using DotNet.Testcontainers.Containers;
     using Xunit;
 
-    public class PgRepoTestContainer : IAsyncLifetime
+    public class PgTestContainer : IAsyncLifetime
     {
         private readonly TestcontainerDatabase testContainers =
             new TestcontainersBuilder<PostgreSqlTestcontainer>()
