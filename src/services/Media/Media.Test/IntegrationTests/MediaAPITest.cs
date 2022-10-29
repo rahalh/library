@@ -7,7 +7,7 @@ namespace Media.Test.IntegrationTests
     using System.Net.Http.Json;
     using System.Threading.Tasks;
     using API.Core;
-    using API.Ports.HTTP.Handlers;
+    using API.Core.Interactors;
     using Helpers;
     using Newtonsoft.Json;
     using Shouldly;
@@ -36,8 +36,8 @@ namespace Media.Test.IntegrationTests
             resp.StatusCode.ShouldBe(HttpStatusCode.OK);
             bodyJSON.ShouldNotBeNullOrEmpty();
 
-            var media = JsonConvert.DeserializeObject<ListResponse>(bodyJSON);
-            media.Items.Count.ShouldBe(4);
+            var media = JsonConvert.DeserializeObject<ListMediaResponse>(bodyJSON);
+            media.Items.Count().ShouldBe(4);
             media.Items.Select(x => x.UpdateTime).ShouldBeInOrder(SortDirection.Descending);
         }
 
@@ -55,8 +55,8 @@ namespace Media.Test.IntegrationTests
             // Assert
             resp.StatusCode.ShouldBe(HttpStatusCode.OK);
             bodyJSON.ShouldNotBeNullOrEmpty();
-            var media = JsonConvert.DeserializeObject<ListResponse>(bodyJSON);
-            media.Items.Count.ShouldBe(actualNumber);
+            var media = JsonConvert.DeserializeObject<ListMediaResponse>(bodyJSON);
+            media.Items.Count().ShouldBe(actualNumber);
             media.Items.Select(x => x.UpdateTime).ShouldBeInOrder(SortDirection.Descending);
         }
 
@@ -91,7 +91,6 @@ namespace Media.Test.IntegrationTests
 
             // Assert
             resp.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-            bodyJSON.ShouldBeEmpty();
         }
 
         // [Fact]
@@ -118,7 +117,7 @@ namespace Media.Test.IntegrationTests
         public async Task CreateMedia_WhenValidParams_ReturnsMedia()
         {
             // Arrange
-            var media = new CreateRequest("Title", "Description", "en", "book", DateTime.UtcNow);
+            var media = new CreateMediaRequest("Title", "Description", "en", "book", DateTime.UtcNow);
 
             // Act
             var resp = await this.httpClient.PostAsJsonAsync("api/media", media);
@@ -140,7 +139,7 @@ namespace Media.Test.IntegrationTests
         public async Task CreateMedia_WhenInvalidMediaType_ReturnsMedia()
         {
             // Arrange
-            var media = new CreateRequest("Title", "Description", "en", "InvalidMedia", DateTime.UtcNow);
+            var media = new CreateMediaRequest("Title", "Description", "en", "InvalidMedia", DateTime.UtcNow);
 
             // Act
             var resp = await this.httpClient.PostAsJsonAsync("api/media", media);

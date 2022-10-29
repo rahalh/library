@@ -2,14 +2,15 @@ namespace Media.API.Ports.HTTP.Handlers
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Media.API.Core;
+    using Core.Interactors;
     using Microsoft.AspNetCore.Http;
 
     public static class DeleteMedia
     {
-        public static async Task<IResult> Handler(IMediaService srv, string id, CancellationToken token)
+        public static async Task<IResult> Handler(DeleteMediaInteractor handler, string id, CancellationToken token)
         {
-            await srv.Delete(id, token);
+            var req = new DeleteMediaRequest(id);
+            await handler.Handle(req, token);
             return Results.NoContent();
         }
     }

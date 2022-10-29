@@ -5,21 +5,24 @@ namespace Media.API.Ports.Events.Handlers
     using System.Threading;
     using System.Threading.Tasks;
     using Confluent.Kafka;
-    using Core;
+    using Core.Interactors;
+    using Serilog;
 
     public record BlobUploadedEvent(string Id, string URL);
 
     public static  class BlobUploadedHandler
     {
-        public static async Task HandleAsync(IMediaService srv, Null key, string value)
+        public static async Task HandleAsync(ILogger logger, SetContentURLInteractor handler, Null key, string value)
         {
-            var msg = JsonSerializer.Deserialize<BlobUploadedEvent>(value);
-            if (msg.Id is null || msg.URL is null)
+            try
             {
-                // tod fix me
-                throw new ArgumentException("Id or URL are missing from the event");
+                var msg = JsonSerializer.Deserialize<BlobUploadedEvent>(value);
+                await handler.Handle(new SetContentURLRequest(msg.Id, msg.URL), CancellationToken.None);
             }
-            await srv.SetContentURL(msg.Id, msg.URL, CancellationToken.None);
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Message);
+            }
         }
     }
 }

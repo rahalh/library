@@ -3,7 +3,7 @@ namespace Media.API.Adapters
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Config;
+    using Configuration;
     using Dapper;
     using Exceptions;
     using Media.API.Core;

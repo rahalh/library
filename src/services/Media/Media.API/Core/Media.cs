@@ -33,7 +33,7 @@ namespace Media.API.Core
         public string ContentURL { get; set; }
         public string Status { get; set; }
 
-        public Media(string title, string description, DateTime publishDate, string mediaType)
+        public Media(string title, string description, string languageCode, DateTime publishDate, string mediaType)
         {
             this.Title = title;
             this.Description = description;
@@ -42,8 +42,7 @@ namespace Media.API.Core
             this.ExternalId = Nanoid.Generate();
             this.CreateTime = DateTime.UtcNow;
             this.UpdateTime = DateTime.UtcNow;
-            // todo fix me
-            this.LanguageCode = "en";
+            this.LanguageCode = languageCode ?? "en";
             this.Status = StatusEnum.StatusPending;
         }
 

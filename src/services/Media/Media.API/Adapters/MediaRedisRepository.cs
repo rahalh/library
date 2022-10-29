@@ -5,7 +5,7 @@ namespace Media.API.Adapters
     using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
-    using Config;
+    using Configuration;
     using Core;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;

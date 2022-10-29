@@ -1,39 +1,17 @@
 namespace Media.API.Ports.HTTP.Handlers
 {
-    using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Adapters.Exceptions;
-    using Core;
-    using Core.Exceptions;
+    using Core.Interactors;
     using Microsoft.AspNetCore.Http;
-
-    public record CreateRequest(
-        string Title,
-        string Description,
-        string LanguageCode,
-        string MediaType,
-        DateTime PublishDate
-    );
 
     public static class CreateMedia
     {
-        public static async Task<IResult> Handler(IMediaService srv, CreateRequest req, CancellationToken token)
+        public static async Task<IResult> Handler(CreateMediaInteractor handler, CreateMediaRequest req,
+            CancellationToken token)
         {
-            try
-            {
-                var media = await srv.Create(new Media(req.Title, req.Description, req.PublishDate, req.MediaType),
-                    token);
-                return Results.CreatedAtRoute("GetMedia", new {id = media.ExternalId}, media);
-            }
-            catch (EntityValidationException ex)
-            {
-                return Results.ValidationProblem(ex.Errors);
-            }
-            catch (EntityExistsException ex)
-            {
-                return Results.Conflict();
-            }
+            var media = await handler.Handle(req, token);
+            return Results.CreatedAtRoute("GetMedia", new {id = media.ExternalId}, media);
         }
     }
 }

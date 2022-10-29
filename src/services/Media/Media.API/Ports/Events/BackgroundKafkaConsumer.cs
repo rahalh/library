@@ -5,6 +5,7 @@ namespace Media.API.Ports.Events
     using System.Threading.Tasks;
     using Confluent.Kafka;
     using Core;
+    using Core.Interactors;
     using Handlers;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -15,18 +16,22 @@ namespace Media.API.Ports.Events
     {
         private readonly IServiceScopeFactory serviceScopeFactory;
         private readonly IConfiguration config;
+        private readonly ILogger logger;
+        private readonly TimeSpan timeout = TimeSpan.FromMilliseconds(1000);
 
-        public BackgroundKafkaConsumer(IServiceScopeFactory serviceScopeFactory, IConfiguration config)
+        // todo I think it is better to inject ConsumerConfig or even better the entire consumer
+        public BackgroundKafkaConsumer(ILogger logger, IServiceScopeFactory serviceScopeFactory, IConfiguration config)
         {
             this.serviceScopeFactory = serviceScopeFactory;
             this.config = config;
+            this.logger = logger;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             using var scope = this.serviceScopeFactory.CreateScope();
 
-            var service = scope.ServiceProvider.GetRequiredService<IMediaService>();
+            var handler = scope.ServiceProvider.GetRequiredService<SetContentURLInteractor>();
             var builder = new ConsumerBuilder<Null, string>(new ConsumerConfig()
             {
                 BootstrapServers = this.config.GetConnectionString("Kafka"),
@@ -40,7 +45,7 @@ namespace Media.API.Ports.Events
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var result = consumer.Consume(TimeSpan.FromMilliseconds(1000));
+                var result = consumer.Consume(this.timeout);
                 if (result != null)
                 {
                     try
@@ -48,10 +53,10 @@ namespace Media.API.Ports.Events
                         switch (result.Topic)
                         {
                             case ConsumedEventType.BlobUploaded:
-                                await BlobUploadedHandler.HandleAsync(service, null, result.Message.Value);
+                                await BlobUploadedHandler.HandleAsync(this.logger, handler, null, result.Message.Value);
                                 break;
                             case ConsumedEventType.BlobRemoved:
-                                await BlobRemovedHandler.HandleAsync(service, null, result.Message.Value);
+                                await BlobRemovedHandler.HandleAsync(this.logger, handler, null, result.Message.Value);
                                 break;
                         }
 
