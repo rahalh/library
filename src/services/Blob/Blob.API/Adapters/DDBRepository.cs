@@ -7,7 +7,7 @@ namespace Blob.API.Adapters
     using System.Threading.Tasks;
     using Amazon.DynamoDBv2;
     using Amazon.DynamoDBv2.Model;
-    using Config;
+    using Configuration;
     using Core;
     using Microsoft.Extensions.Configuration;
 

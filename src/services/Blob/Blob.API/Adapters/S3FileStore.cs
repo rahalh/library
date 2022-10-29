@@ -5,7 +5,7 @@ namespace Blob.API.Adapters
     using System.Threading.Tasks;
     using Amazon.S3;
     using Amazon.S3.Transfer;
-    using Config;
+    using Configuration;
     using Core;
     using Microsoft.VisualBasic;
 

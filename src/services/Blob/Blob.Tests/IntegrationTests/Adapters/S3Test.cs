@@ -6,7 +6,7 @@ namespace Blob.Tests.IntegrationTests.Adapters
     using System.Threading;
     using System.Threading.Tasks;
     using API.Adapters;
-    using API.Config;
+    using API.Configuration;
     using Shouldly;
     using Xunit;
 
@@ -22,7 +22,7 @@ namespace Blob.Tests.IntegrationTests.Adapters
         {
             // Arrange
             var bucketName = "blob";
-            var fileStore = new S3FileStore(new S3Settings(bucketName) {ServiceUrl = this.localstackUrl, ForcePathStyle = true});
+            var fileStore = new S3FileStore(new S3Settings(bucketName, this.localstackUrl) {ServiceUrl = this.localstackUrl, ForcePathStyle = true});
 
             var content = "Hello World from a Fake File";
             var fileName = "test.pdf";

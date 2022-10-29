@@ -1,6 +1,7 @@
 namespace Blob.API.Core
 {
     using System;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.VisualBasic;
 
     public enum BlobTypes
@@ -27,11 +28,15 @@ namespace Blob.API.Core
             this.Name = $"{id}.{extension}";
             this.Size = size;
             this.BlobType = Strings.UCase(blobType);
-            this.Extension = Strings.LCase(extension);
+            this.Extension = Strings.UCase(extension);
             this.CreateTime = DateTime.UtcNow;
             this.UpdateTime = DateTime.UtcNow;
 
-            this.URL = $"https://{storageDomain}/{prefix}/media/{this.Name}";
+            this.URL = new UriBuilder() {
+                Host = storageDomain,
+                Scheme = "https",
+                Path = Strings.Join(new [] {prefix, "media", this.Name}, "/")!
+            }.Uri.ToString();
         }
 
         public Blob() { }

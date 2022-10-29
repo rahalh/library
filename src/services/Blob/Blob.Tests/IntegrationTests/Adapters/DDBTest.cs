@@ -3,7 +3,7 @@ namespace Blob.Tests.IntegrationTests.Adapters
     using System.Threading;
     using System.Threading.Tasks;
     using API.Adapters;
-    using API.Config;
+    using API.Configuration;
     using API.Core;
     using Shouldly;
     using Xunit;

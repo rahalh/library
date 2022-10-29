@@ -2,23 +2,15 @@ namespace Blob.API.Ports.HTTP.Handlers
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Adapters.Exceptions;
-    using Core;
+    using Core.Interactors;
     using Microsoft.AspNetCore.Http;
 
     public static class GetBlob
     {
-        public static async Task<IResult> Handle(IBlobService srv, string id, CancellationToken token)
+        public static async Task<IResult> Handler(GetBlobByIdInteractor handler, string id, CancellationToken token)
         {
-            try
-            {
-                var res = await srv.GetByIdAsync(id, token);
-                return Results.Ok(res);
-            }
-            catch (NotFoundException _)
-            {
-                return Results.NotFound();
-            }
+            var res = await handler.HandleAsync(new GetBlobByIdRequest(id), token);
+            return Results.Ok(res);
         }
     }
 }

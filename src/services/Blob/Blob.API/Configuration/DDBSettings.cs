@@ -1,4 +1,4 @@
-namespace Blob.API.Config
+namespace Blob.API.Configuration
 {
     using System;
 
@@ -10,7 +10,7 @@ namespace Blob.API.Config
         public DDBSettings(string tableName, string serviceURL)
         {
             this.TableName = string.IsNullOrEmpty(tableName)
-                ? throw new ArgumentNullException($"{nameof(TableName)} is missing")
+                ? throw new ArgumentNullException($"{nameof(this.TableName)} is missing")
                 : tableName;
             this.ServiceURL = serviceURL;
         }

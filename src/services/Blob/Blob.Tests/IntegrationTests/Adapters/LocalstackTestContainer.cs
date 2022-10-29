@@ -25,7 +25,6 @@ namespace Blob.Tests.IntegrationTests.Adapters
                 .WithWaitStrategy(Wait.ForUnixContainer()
                 .UntilPortIsAvailable(4566)
                 .AddCustomWaitStrategy(new LocalstackContainerHealthCheck(this.LocalstackUri)))
-                .WithCleanUp(true)
                 .Build();
         }
 
