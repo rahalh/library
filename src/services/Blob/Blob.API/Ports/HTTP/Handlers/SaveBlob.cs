@@ -9,8 +9,8 @@ namespace Blob.API.Ports.HTTP.Handlers
 
     public static class SaveBlob
     {
-        public static async Task<IResult> Handler(CreateBlobInteractor handler, HttpRequest req,
-            CancellationToken token)
+        // todo remove cancellation tokens from methods that may change state
+        public static async Task<IResult> Handler(StoreBlobInteractor handler, HttpRequest req, CancellationToken token)
         {
             var id = req.RouteValues.GetValueOrDefault("id") as string;
             var file = req.Form.Files[0];
@@ -25,7 +25,7 @@ namespace Blob.API.Ports.HTTP.Handlers
             var size = file.Length;
 
             await using var stream = file.OpenReadStream();
-            await handler.HandleAsync(new CreateBlobRequest(id, size, blobType, extension, stream), token);
+            await handler.HandleAsync(new StoreBlobRequest(id, size, blobType, extension, stream), CancellationToken.None);
             return Results.NoContent();
         }
     }

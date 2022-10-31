@@ -5,9 +5,8 @@ namespace Media.API.Middleware
     using System.Text.Json;
     using System.Threading.Tasks;
     using Adapters.Exceptions;
-    using Core.Helpers.Exceptions;
+    using Core.Exceptions;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
     using Serilog;
 
     public class ErrorHandlingMiddleware
@@ -37,7 +36,7 @@ namespace Media.API.Middleware
             var code = HttpStatusCode.InternalServerError;
             var message = "An unhandled error has occurred.";
 
-            if (ex is BadRequestException)
+            if (ex is ValidationException)
             {
                 code = HttpStatusCode.BadRequest;
                 message = ex.Message;

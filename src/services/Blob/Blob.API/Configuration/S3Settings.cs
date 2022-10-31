@@ -12,9 +12,11 @@ namespace Blob.API.Configuration
 
         public S3Settings(string bucketName, string storageDomain)
         {
+            // todo can't start with a dot
             this.StorageDomain = string.IsNullOrEmpty(storageDomain)
                 ? throw new ArgumentNullException($"{nameof(this.BucketName)} is missing")
                 : storageDomain;
+
             this.BucketName = string.IsNullOrEmpty(bucketName)
                 ? throw new ArgumentNullException($"{nameof(this.BucketName)} is missing")
                 : bucketName;
