@@ -3,6 +3,7 @@ namespace Media.API.Core.Interactors
     using System.Threading;
     using System.Threading.Tasks;
     using Adapters.Exceptions;
+    using Exceptions;
 
     public class GetMediaInteractor
     {
@@ -15,7 +16,7 @@ namespace Media.API.Core.Interactors
             var media = await this.repo.FetchById(request.Id, token);
             if (media is null)
             {
-                throw new NotFoundException();
+                throw new NotFoundException($"Can't find Media with Id: {request.Id}");
             }
             media.TotalViews += 1;
             await this.repo.SetViewCount(request.Id, media.TotalViews, token);

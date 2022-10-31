@@ -1,15 +1,16 @@
 namespace Media.API.Core
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
 
-    public static class ProducedEventType
+    public static class ProducedEvents
     {
         public const string MediaRemoved = "MEDIA_REMOVED";
-        public const string BlobFailed = "BLOB_FAILED";
+        public const string MediaUpdateFailed = "MEDIA_UPDATE_FAILED";
     }
 
-    public static class ConsumedEventType
+    public static class ConsumedEvents
     {
         public const string BlobUploaded = "MEDIA_BLOB_UPLOADED";
         public const string BlobRemoved = "MEDIA_BLOB_REMOVED";
@@ -24,6 +25,6 @@ namespace Media.API.Core
 
     public interface IEventProducer
     {
-        public Task ProduceAsync(Event @event);
+        public Task ProduceAsync(Event @event, CancellationToken token);
     }
 }

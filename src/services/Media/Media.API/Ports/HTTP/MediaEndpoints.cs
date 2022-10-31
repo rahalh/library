@@ -8,10 +8,10 @@ namespace Media.API.Ports.HTTP
     {
         public static IEndpointRouteBuilder MapMediaEndpoints(this IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapPost("/api/media", CreateMedia.Handler);
-            endpoints.MapGet("/api/media/{id}", GetMedia.Handler).WithName("GetMedia");
-            endpoints.MapDelete("/api/media/{id}", DeleteMedia.Handler);
-            endpoints.MapGet("/api/media", ListMedia.Handler);
+            endpoints.MapPost("/media", CreateMedia.Handler);
+            endpoints.MapGet("/media/{id}", GetMedia.Handler).WithName("GetMedia");
+            endpoints.MapDelete("/media/{id}", DeleteMedia.Handler);
+            endpoints.MapGet("/media", ListMedia.Handler);
 
             return endpoints;
         }

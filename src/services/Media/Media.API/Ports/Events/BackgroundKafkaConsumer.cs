@@ -6,7 +6,6 @@ namespace Media.API.Ports.Events
     using Confluent.Kafka;
     using Core;
     using Core.Interactors;
-    using Handlers;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -18,55 +17,62 @@ namespace Media.API.Ports.Events
         private readonly IConfiguration config;
         private readonly ILogger logger;
         private readonly TimeSpan timeout = TimeSpan.FromMilliseconds(1000);
+        private readonly int delay = 5000;
+        private readonly string[] topics = new[] {ConsumedEvents.BlobRemoved, ConsumedEvents.BlobUploaded};
 
         // todo I think it is better to inject ConsumerConfig or even better the entire consumer
         public BackgroundKafkaConsumer(ILogger logger, IServiceScopeFactory serviceScopeFactory, IConfiguration config)
         {
             this.serviceScopeFactory = serviceScopeFactory;
             this.config = config;
-            this.logger = logger;
+            this.logger = logger.ForContext<BackgroundKafkaConsumer>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             using var scope = this.serviceScopeFactory.CreateScope();
-
-            var handler = scope.ServiceProvider.GetRequiredService<SetContentURLInteractor>();
             var builder = new ConsumerBuilder<Null, string>(new ConsumerConfig()
             {
                 BootstrapServers = this.config.GetConnectionString("Kafka"),
-                AutoOffsetReset = AutoOffsetReset.Earliest,
-                EnableAutoOffsetStore = false,
-                GroupId = "blob_event_consumer"
+                GroupId = "media_event_consumers"
             });
 
             using var consumer = builder.Build();
-            consumer.Subscribe(new [] {ConsumedEventType.BlobRemoved, ConsumedEventType.BlobUploaded});
+            consumer.Subscribe(this.topics);
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var result = consumer.Consume(this.timeout);
-                if (result != null)
+                string message = null;
+                try
                 {
-                    try
+                    var result = consumer.Consume(this.timeout);
+                    if (result != null)
                     {
-                        switch (result.Topic)
+                        message = result.Message.Value;
+                        if (result.Topic == ConsumedEvents.BlobUploaded)
                         {
-                            case ConsumedEventType.BlobUploaded:
-                                await BlobUploadedHandler.HandleAsync(this.logger, handler, null, result.Message.Value);
-                                break;
-                            case ConsumedEventType.BlobRemoved:
-                                await BlobRemovedHandler.HandleAsync(this.logger, handler, null, result.Message.Value);
-                                break;
+                            var handler = scope.ServiceProvider.GetRequiredService<SetContentURLInteractor>();
+                            await handler.HandleAsync(message, CancellationToken.None);
+                        }
+                        else if (result.Topic == ConsumedEvents.BlobRemoved)
+                        {
+                            var handler = scope.ServiceProvider.GetRequiredService<RemoveContentURLInteractor>();
+                            await handler.HandleAsync(message, CancellationToken.None);
                         }
 
                         consumer.Commit(result);
                         consumer.StoreOffset(result);
                     }
-                    catch (Exception e)
-                    {
-                        Log.Error(e, e.Message);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    this.logger
+                        .ForContext("Event", message)
+                        .Error(ex, message is not null ? "Error while processing an event" : ex.Message);
+                }
+                finally
+                {
+                    await Task.Delay(this.delay, stoppingToken);
                 }
             }
         }

@@ -1,81 +1,47 @@
 namespace Media.API.Core.Interactors
 {
-    using System;
     using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
     using Exceptions;
     using FluentValidation;
-    using Serilog;
     using ValidationException = FluentValidation.ValidationException;
 
-    public class EmptyContentURLInteractor
+    public class RemoveContentURLInteractor
     {
         private readonly IMediaRepository repo;
-        private readonly IEventProducer eventProducer;
-        private readonly ILogger logger;
 
-        public EmptyContentURLInteractor(ILogger logger, IMediaRepository repo, IEventProducer eventProducer)
-        {
-            this.repo = repo;
-            this.eventProducer = eventProducer;
-            this.logger = logger.ForContext<SetContentURLInteractor>().ForContext("Method", $"{typeof(SetContentURLInteractor).FullName}.{nameof(this.HandleAsync)}");
-        }
+        public RemoveContentURLInteractor(IMediaRepository repo) => this.repo = repo;
 
+        // Domain event (side-effect) does not contain a rollback operation
         public async Task HandleAsync(string message, CancellationToken token)
         {
-            try
-            {
-                var request = JsonSerializer.Deserialize<SetContentURLRequest>(message);
-                var validationResults = new SetContentURLRequest.Validator().Validate(request);
-                if (!validationResults.IsValid)
-                {
-                    throw new ValidationException(JsonSerializer.Serialize(validationResults.ToDictionary()));
-                }
+            var request = JsonSerializer.Deserialize<Request>(message);
 
-                // todo need function to check existence
-                var media = await this.repo.FetchById(request.Id, token);
-                if (media is null)
-                {
-                    throw new NotFoundException($"Can't find media with Id: {request.Id}");
-                }
-
-                await this.repo.SetContentURL(request.Id, request.URL, token);
-            }
-            catch (Exception ex)
+            var validationResults = new Request.Validator().Validate(request);
+            if (!validationResults.IsValid)
             {
-                this.logger.Error(ex, ex.Message);
-                try
-                {
-                    var @event = new Event(DateTime.UtcNow, ProducedEvents.MediaUpdateFailed, "Media", message);
-                    await this.eventProducer.ProduceAsync(@event, token);
-                }
-                catch (Exception innerEx)
-                {
-                    this.logger
-                        .ForContext("EventType", ProducedEvents.MediaUpdateFailed)
-                        .Error(innerEx, "Failed to publish the event");
-                }
-                throw;
+                throw new ValidationException(JsonSerializer.Serialize(validationResults.ToDictionary()));
             }
+
+            var media = await this.repo.FetchById(request.Id, token);
+            if (media is null)
+            {
+                throw new NotFoundException($"Can't find media with Id: {request.Id}");
+            }
+
+            await this.repo.SetContentURL(request.Id, null, token);
         }
     }
 
-    public record SetContentURLRequest(string Id, string URL)
+    public record Request(string Id)
     {
-        public class Validator : AbstractValidator<SetContentURLRequest>
+        public class Validator : AbstractValidator<Request>
         {
-            public Validator()
-            {
-                this.RuleFor(x => x.URL)
-                    .NotNull()
-                    .NotEmpty()
-                    .MaximumLength(2048);
-
+            public Validator() =>
                 this.RuleFor(x => x.Id)
                     .NotNull()
                     .NotEmpty();
-            }
         }
     };
 }

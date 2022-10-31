@@ -3,10 +3,11 @@ namespace Media.API.Core.Interactors
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using Exceptions;
     using FluentValidation;
     using Helpers;
-    using Helpers.Exceptions;
     using Newtonsoft.Json;
+    using ValidationException = global::Media.API.Core.Exceptions.ValidationException;
 
     public class CreateMediaInteractor
     {
@@ -19,7 +20,7 @@ namespace Media.API.Core.Interactors
             var validationResult = new CreateMediaRequest.Validator().Validate(request);
             if (!validationResult.IsValid)
             {
-                throw new BadRequestException(JsonConvert.SerializeObject(validationResult.ToDictionary()));
+                throw new ValidationException(JsonConvert.SerializeObject(validationResult.ToDictionary()));
             }
 
             var media = new Media(request.Title, request.Description, request.LanguageCode, request.PublishDate,

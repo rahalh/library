@@ -10,7 +10,7 @@ namespace Media.API.Ports.HTTP.Handlers
         public static async Task<IResult> Handler(DeleteMediaInteractor handler, string id, CancellationToken token)
         {
             var req = new DeleteMediaRequest(id);
-            await handler.Handle(req, token);
+            await handler.HandleAsync(req, token);
             return Results.NoContent();
         }
     }

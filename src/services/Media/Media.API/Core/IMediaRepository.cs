@@ -12,5 +12,6 @@ namespace Media.API.Core
         public Task<List<Media>> List(PaginationParams parameters, CancellationToken token);
         public Task SetViewCount(string id, int count, CancellationToken token);
         public Task SetContentURL(string id, string url, CancellationToken token);
+        public Task<bool> CheckExists(string id, CancellationToken token);
     }
 }

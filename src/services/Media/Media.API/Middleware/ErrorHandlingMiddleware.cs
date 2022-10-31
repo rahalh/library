@@ -40,16 +40,16 @@ namespace Media.API.Middleware
             {
                 code = HttpStatusCode.BadRequest;
                 message = ex.Message;
-                this.logger.Error(ex, "Invalid operation or bad request details.");
-            } else if (ex is EntityExistsException)
+                this.logger.Error(ex, ex.Message);
+            } else if (ex is ConflictException)
             {
                 code = HttpStatusCode.Conflict;
-                message = "Resource already exists";
-                this.logger.Error(ex, "Entity already exists");
+                message = ex.Message;
+                this.logger.Error(ex, ex.Message);
             } else if (ex is NotFoundException)
             {
                 code = HttpStatusCode.NotFound;
-                message = "Resource not found";
+                message = ex.Message;
             } else
             {
                 this.logger.Error(ex, "Middleware caught an unhandled exception.");
