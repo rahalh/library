@@ -7,8 +7,6 @@ namespace Media.API.Adapters
     using System.Threading.Tasks;
     using Configuration;
     using Core;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.Extensions.Configuration;
     using Serilog;
     using StackExchange.Redis;
 
@@ -88,6 +86,8 @@ namespace Media.API.Adapters
                 await this.RunWithErrorHandler(action);
             }
         }
+
+        public async Task<bool> CheckExists(string id, CancellationToken token) => await this.repo.CheckExists(id, token);
 
         private async Task<TObject> GetValueAsync<TObject>(IDatabase cache, string key)
             where TObject : class

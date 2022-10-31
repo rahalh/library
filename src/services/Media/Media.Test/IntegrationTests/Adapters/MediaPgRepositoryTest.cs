@@ -13,7 +13,6 @@ namespace Media.Test.IntegrationTests.Adapters
     using TestContainers;
     using Xunit;
 
-    // TODO parallel vs sequential execution
     public class MediaPgRepositoryTest : IClassFixture<PgTestContainer>, IAsyncLifetime
     {
         private readonly string connectionString;
@@ -148,6 +147,30 @@ namespace Media.Test.IntegrationTests.Adapters
             res.PublishDate.ShouldBe(media.PublishDate.Date);
             res.LanguageCode.ShouldBe(media.LanguageCode);
             res.MediaType.ShouldBe(media.MediaType);
+        }
+
+        [Fact]
+        public async Task CheckExists_WhenDoesntExist_ReturnsFalse() {
+            // Arrange
+            var id = "invalidId";
+
+            // Act
+            var exists = await this.repo.CheckExists(id, CancellationToken.None);
+
+            // Assert
+            exists.ShouldBe(false);
+        }
+
+        [Fact]
+        public async Task CheckExists_WhenExists_ReturnsTrue() {
+            // Arrange
+            var id = "UPj6SSMvaKIuXwnY";
+
+            // Act
+            var exists = await this.repo.CheckExists(id, CancellationToken.None);
+
+            // Assert
+            exists.ShouldBe(true);
         }
 
         public async Task InitializeAsync() => await DBHelper.Reset(this.connectionString);

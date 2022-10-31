@@ -7,9 +7,7 @@ namespace Media.API.Adapters
     using Dapper;
     using Exceptions;
     using Media.API.Core;
-    using Microsoft.Extensions.Configuration;
     using Npgsql;
-    using NpgsqlTypes;
 
     public class MediaPgRepository : IMediaRepository
     {
@@ -54,9 +52,8 @@ namespace Media.API.Adapters
             {
                 if (ex.ErrorCode == 23505)
                 {
-                    throw new EntityExistsException();
+                    throw new ConflictException($"An entity with ExternalId = '{media.ExternalId}' already exists");
                 }
-
                 throw;
             }
         }
@@ -126,6 +123,13 @@ namespace Media.API.Adapters
             await using var connection = new NpgsqlConnection(this.connectionString);
             var command = @"update media set content_url = @url where external_id = @id";
             await connection.ExecuteAsync(new CommandDefinition(command, new {id, url}, cancellationToken: token));
+        }
+
+        public async Task<bool> CheckExists(string id, CancellationToken token)
+        {
+            await using var connection = new NpgsqlConnection(this.connectionString);
+            var command = @"select count(*) from media where external_id = @id";
+            return await connection.ExecuteScalarAsync<bool>(new CommandDefinition(command, new {id}, cancellationToken: token));
         }
     }
 }
