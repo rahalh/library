@@ -24,31 +24,30 @@ namespace Media.API.Core.Interactors
                 .ForContext("Method", $"{typeof(SetContentURLInteractor).FullName}.{nameof(this.HandleAsync)}");
         }
 
-        public async Task HandleAsync(string message, CancellationToken token)
+        public async Task HandleAsync(SetContentURLRequest request, CancellationToken token)
         {
             try
             {
-                var request = JsonSerializer.Deserialize<SetContentURLRequest>(message);
                 var validationResults = new SetContentURLRequest.Validator().Validate(request);
                 if (!validationResults.IsValid)
                 {
                     throw new ValidationException(JsonSerializer.Serialize(validationResults.ToDictionary()));
                 }
 
-                var exists = await this.repo.CheckExists(request.Id, token);
+                var exists = await this.repo.CheckExistsAsync(request.Id, token);
                 if (!exists)
                 {
                     throw new NotFoundException($"Can't find media with Id: {request.Id}");
                 }
 
-                await this.repo.SetContentURL(request.Id, request.URL, token);
+                await this.repo.SetContentURLAsync(request.Id, request.URL, token);
             }
             catch (Exception ex)
             {
                 this.logger.Error(ex, ex.Message);
                 try
                 {
-                    var @event = new Event(DateTime.UtcNow, ProducedEvents.MediaUpdateFailed, "Media", message);
+                    var @event = new Event(DateTime.UtcNow, ProducedEvents.MediaUpdateFailed, "Media", request);
                     await this.eventProducer.ProduceAsync(@event, token);
                 }
                 catch (Exception innerEx)
@@ -68,6 +67,7 @@ namespace Media.API.Core.Interactors
         {
             public Validator()
             {
+                // todo check if URL is valid
                 this.RuleFor(x => x.URL)
                     .NotNull()
                     .NotEmpty()

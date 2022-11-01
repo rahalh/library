@@ -1,4 +1,4 @@
-namespace Media.API.Ports.HTTP.Handlers
+namespace Media.API.Transport.HTTP.Handlers
 {
     using System.Threading;
     using System.Threading.Tasks;
@@ -10,7 +10,7 @@ namespace Media.API.Ports.HTTP.Handlers
         public static async Task<IResult> Handler(GetMediaInteractor handler, string id, CancellationToken token)
         {
             var req = new GetMediaRequest(id);
-            var media = await handler.Handle(req, token);
+            var media = await handler.HandleAsync(req, token);
             return Results.Ok(media);
         }
     }

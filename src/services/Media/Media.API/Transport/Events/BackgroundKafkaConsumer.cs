@@ -1,6 +1,7 @@
-namespace Media.API.Ports.Events
+namespace Media.API.Transport.Events
 {
     using System;
+    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
     using Confluent.Kafka;
@@ -51,13 +52,15 @@ namespace Media.API.Ports.Events
                         message = result.Message.Value;
                         if (result.Topic == ConsumedEvents.BlobUploaded)
                         {
+                            var request = JsonSerializer.Deserialize<SetContentURLRequest>(message);
                             var handler = scope.ServiceProvider.GetRequiredService<SetContentURLInteractor>();
-                            await handler.HandleAsync(message, CancellationToken.None);
+                            await handler.HandleAsync(request, CancellationToken.None);
                         }
                         else if (result.Topic == ConsumedEvents.BlobRemoved)
                         {
+                            var request = JsonSerializer.Deserialize<RemoveContentURLRequest>(message);
                             var handler = scope.ServiceProvider.GetRequiredService<RemoveContentURLInteractor>();
-                            await handler.HandleAsync(message, CancellationToken.None);
+                            await handler.HandleAsync(request, CancellationToken.None);
                         }
 
                         consumer.Commit(result);

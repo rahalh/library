@@ -46,6 +46,7 @@ namespace Media.Test.IntegrationTests
 
         public async Task InitializeAsync()
         {
+
             await this.pgContainer.StartAsync();
             await this.redisContainer.StartAsync();
         }

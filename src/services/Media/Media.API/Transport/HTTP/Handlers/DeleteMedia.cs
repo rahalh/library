@@ -1,4 +1,4 @@
-namespace Media.API.Ports.HTTP.Handlers
+namespace Media.API.Transport.HTTP.Handlers
 {
     using System.Threading;
     using System.Threading.Tasks;

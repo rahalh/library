@@ -11,15 +11,15 @@ namespace Media.API.Core.Interactors
 
         public GetMediaInteractor(IMediaRepository repo) => this.repo = repo;
 
-        public async Task<MediaDTO> Handle(GetMediaRequest request, CancellationToken token)
+        public async Task<MediaDTO> HandleAsync(GetMediaRequest request, CancellationToken token)
         {
-            var media = await this.repo.FetchById(request.Id, token);
+            var media = await this.repo.FetchByIdAsync(request.Id, token);
             if (media is null)
             {
                 throw new NotFoundException($"Can't find Media with Id: {request.Id}");
             }
             media.TotalViews += 1;
-            await this.repo.SetViewCount(request.Id, media.TotalViews, token);
+            await this.repo.SetViewCountAsync(request.Id, media.TotalViews, token);
             return new MediaDTO(
                 media.Title,
                 media.Description,

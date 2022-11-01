@@ -6,12 +6,12 @@ namespace Media.API.Core
 
     public interface IMediaRepository
     {
-        public Task Save(Media media, CancellationToken token);
-        public Task<Media> FetchById(string id, CancellationToken token);
-        public Task Remove(string id, CancellationToken token);
-        public Task<List<Media>> List(PaginationParams parameters, CancellationToken token);
-        public Task SetViewCount(string id, int count, CancellationToken token);
-        public Task SetContentURL(string id, string url, CancellationToken token);
-        public Task<bool> CheckExists(string id, CancellationToken token);
+        public Task SaveAsync(Media media, CancellationToken token);
+        public Task<Media> FetchByIdAsync(string id, CancellationToken token);
+        public Task RemoveAsync(string id, CancellationToken token);
+        public Task<List<Media>> ListAsync(PaginationParams parameters, CancellationToken token);
+        public Task SetViewCountAsync(string id, int count, CancellationToken token);
+        public Task SetContentURLAsync(string id, string url, CancellationToken token);
+        public Task<bool> CheckExistsAsync(string id, CancellationToken token);
     }
 }

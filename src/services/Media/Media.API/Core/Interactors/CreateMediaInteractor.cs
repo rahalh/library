@@ -3,7 +3,6 @@ namespace Media.API.Core.Interactors
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Exceptions;
     using FluentValidation;
     using Helpers;
     using Newtonsoft.Json;
@@ -15,7 +14,7 @@ namespace Media.API.Core.Interactors
 
         public CreateMediaInteractor(IMediaRepository repo) => this.repo = repo;
 
-        public async Task<MediaDTO> Handle(CreateMediaRequest request, CancellationToken token)
+        public async Task<MediaDTO> HandleAsync(CreateMediaRequest request, CancellationToken token)
         {
             var validationResult = new CreateMediaRequest.Validator().Validate(request);
             if (!validationResult.IsValid)
@@ -25,7 +24,7 @@ namespace Media.API.Core.Interactors
 
             var media = new Media(request.Title, request.Description, request.LanguageCode, request.PublishDate,
                 request.MediaType);
-            await this.repo.Save(media, token);
+            await this.repo.SaveAsync(media, token);
             return new MediaDTO(
                 media.Title,
                 media.Description,
@@ -69,8 +68,7 @@ namespace Media.API.Core.Interactors
                     .NotNull()
                     .NotEmpty()
                     .Must(x => EnumUtils.TryParseWithMemberName<MediaType>(x, out _))
-                    .WithErrorCode("unsupported media type")
-                    .When(x => !string.IsNullOrEmpty(x.MediaType));
+                    .WithErrorCode("unsupported media type");
 
                 // todo language code can be null, but if present must be valid
             }

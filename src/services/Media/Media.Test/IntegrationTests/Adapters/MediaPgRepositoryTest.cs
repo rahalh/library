@@ -27,7 +27,7 @@ namespace Media.Test.IntegrationTests.Adapters
         [Fact]
         public async Task GetAllMedia_WhenFetch10Media_ReturnsListOf4Media()
         {
-            var media = await this.repo.List(new PaginationParams(null, 10), CancellationToken.None);
+            var media = await this.repo.ListAsync(new PaginationParams(null, 10), CancellationToken.None);
 
             media.ShouldNotBeNull();
             media.ShouldBeOfType<List<Media>>();
@@ -39,7 +39,7 @@ namespace Media.Test.IntegrationTests.Adapters
         public async Task GetAllMedia_WhenFetchXMedia_ReturnsListOfXMedia()
         {
             var pageSize = 2;
-            var media = await this.repo.List(new PaginationParams(null, pageSize), CancellationToken.None);
+            var media = await this.repo.ListAsync(new PaginationParams(null, pageSize), CancellationToken.None);
 
             media.ShouldNotBeNull();
             media.ShouldBeOfType<List<Media>>();
@@ -52,7 +52,7 @@ namespace Media.Test.IntegrationTests.Adapters
         public async Task GetAllMedia_WhenFetchTokenMedia_ReturnsListOfMedia()
         {
             var id = "UPj6SSMvaKIuXwnY";
-            var media = await this.repo.List(new PaginationParams(id, 3), CancellationToken.None);
+            var media = await this.repo.ListAsync(new PaginationParams(id, 3), CancellationToken.None);
 
             media.ShouldNotBeNull();
             media.ShouldBeOfType<List<Media>>();
@@ -65,7 +65,7 @@ namespace Media.Test.IntegrationTests.Adapters
         public async Task GetById_WhenFetchValidId_ReturnsMedia()
         {
             var id = "UPj6SSMvaKIuXwnY";
-            var media = await this.repo.FetchById(id, CancellationToken.None);
+            var media = await this.repo.FetchByIdAsync(id, CancellationToken.None);
 
             media.ShouldNotBeNull();
             media.ShouldBeOfType<Media>();
@@ -75,7 +75,7 @@ namespace Media.Test.IntegrationTests.Adapters
         [Fact]
         public async Task GetById_WhenFetchInValid_ReturnsNull()
         {
-            var media = await this.repo.FetchById("invalid_id", CancellationToken.None);
+            var media = await this.repo.FetchByIdAsync("invalid_id", CancellationToken.None);
             media.ShouldBeNull();
         }
 
@@ -86,10 +86,10 @@ namespace Media.Test.IntegrationTests.Adapters
             var id = "UPj6SSMvaKIuXwnY";
 
             // Act
-            await this.repo.Remove(id, CancellationToken.None);
+            await this.repo.RemoveAsync(id, CancellationToken.None);
 
             // Assert
-            var media = await this.repo.FetchById(id, CancellationToken.None);
+            var media = await this.repo.FetchByIdAsync(id, CancellationToken.None);
             media.ShouldBeNull();
         }
 
@@ -98,13 +98,13 @@ namespace Media.Test.IntegrationTests.Adapters
         {
             // Arrange
             var id = "UPj6SSMvaKIuXwnY";
-            var res = await this.repo.FetchById(id, CancellationToken.None);
+            var res = await this.repo.FetchByIdAsync(id, CancellationToken.None);
             var count = res.TotalViews;
             // Act
-            await this.repo.SetViewCount(id, ++count, CancellationToken.None);
+            await this.repo.SetViewCountAsync(id, ++count, CancellationToken.None);
 
             // Assert
-            var media = await this.repo.FetchById(id, CancellationToken.None);
+            var media = await this.repo.FetchByIdAsync(id, CancellationToken.None);
             media.ShouldNotBeNull();
             media.TotalViews.ShouldBe(12);
         }
@@ -117,10 +117,10 @@ namespace Media.Test.IntegrationTests.Adapters
             var url = "url";
 
             // Act
-            await this.repo.SetContentURL(id, url, CancellationToken.None);
+            await this.repo.SetContentURLAsync(id, url, CancellationToken.None);
 
             // Assert
-            var media = await this.repo.FetchById(id, CancellationToken.None);
+            var media = await this.repo.FetchByIdAsync(id, CancellationToken.None);
             media.ShouldNotBeNull();
             media.ContentURL.ShouldNotBeNull();
             media.ContentURL.ShouldBe(url);
@@ -136,10 +136,10 @@ namespace Media.Test.IntegrationTests.Adapters
             media.LanguageCode = "en";
 
             // Act
-            await this.repo.Save(media, CancellationToken.None);
+            await this.repo.SaveAsync(media, CancellationToken.None);
 
             // Assert
-            var res = await this.repo.FetchById(media.ExternalId, CancellationToken.None);
+            var res = await this.repo.FetchByIdAsync(media.ExternalId, CancellationToken.None);
             res.ShouldNotBeNull();
             res.ExternalId.ShouldBe(media.ExternalId);
             res.Title.ShouldBe(media.Title);
@@ -155,7 +155,7 @@ namespace Media.Test.IntegrationTests.Adapters
             var id = "invalidId";
 
             // Act
-            var exists = await this.repo.CheckExists(id, CancellationToken.None);
+            var exists = await this.repo.CheckExistsAsync(id, CancellationToken.None);
 
             // Assert
             exists.ShouldBe(false);
@@ -167,7 +167,7 @@ namespace Media.Test.IntegrationTests.Adapters
             var id = "UPj6SSMvaKIuXwnY";
 
             // Act
-            var exists = await this.repo.CheckExists(id, CancellationToken.None);
+            var exists = await this.repo.CheckExistsAsync(id, CancellationToken.None);
 
             // Assert
             exists.ShouldBe(true);

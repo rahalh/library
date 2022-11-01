@@ -24,7 +24,7 @@ namespace Media.API.Core.Interactors
         public async Task HandleAsync(DeleteMediaRequest request, CancellationToken token)
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-            await this.repo.Remove(request.Id, token);
+            await this.repo.RemoveAsync(request.Id, token);
             try
             {
                 var @event = new Event(DateTime.UtcNow, ProducedEvents.MediaRemoved, "Media", request.Id);

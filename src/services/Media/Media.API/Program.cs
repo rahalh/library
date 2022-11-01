@@ -4,10 +4,10 @@ using Media.API.Configuration;
 using Media.API.Core;
 using Media.API.Core.Interactors;
 using Media.API.Middleware;
-using Media.API.Ports.Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Media.API.Ports.HTTP;
+using Media.API.Transport.Events;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 

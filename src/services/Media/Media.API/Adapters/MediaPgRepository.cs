@@ -15,7 +15,7 @@ namespace Media.API.Adapters
 
         public MediaPgRepository(PostgresqlSettings settings) => this.connectionString = settings.ConnectionString;
 
-        public async Task Save(Media media, CancellationToken token)
+        public async Task SaveAsync(Media media, CancellationToken token)
         {
             await using var connection = new NpgsqlConnection(this.connectionString);
             await connection.OpenAsync(token);
@@ -58,7 +58,7 @@ namespace Media.API.Adapters
             }
         }
 
-        public async Task<Media> FetchById(string id, CancellationToken token)
+        public async Task<Media> FetchByIdAsync(string id, CancellationToken token)
         {
             await using var connection = new NpgsqlConnection(this.connectionString);
             var query = @"
@@ -79,14 +79,14 @@ namespace Media.API.Adapters
             return res;
         }
 
-        public async Task Remove(string id, CancellationToken token)
+        public async Task RemoveAsync(string id, CancellationToken token)
         {
             await using var connection = new NpgsqlConnection(this.connectionString);
             var command = @"delete from media where external_id = @id";
             await connection.ExecuteAsync(new CommandDefinition(command, new {id}, cancellationToken: token));
         }
 
-        public async Task<List<Media>> List(PaginationParams parameters, CancellationToken token)
+        public async Task<List<Media>> ListAsync(PaginationParams parameters, CancellationToken token)
         {
             await using var connection = new NpgsqlConnection(this.connectionString);
             var query = @"
@@ -111,21 +111,21 @@ namespace Media.API.Adapters
             return res.AsList();
         }
 
-        public async Task SetViewCount(string id, int viewCount, CancellationToken token)
+        public async Task SetViewCountAsync(string id, int viewCount, CancellationToken token)
         {
             await using var connection = new NpgsqlConnection(this.connectionString);
             var command = @"update media set total_views = @viewCount where external_id = @id";
             await connection.ExecuteAsync(new CommandDefinition(command, new {id, viewCount}, cancellationToken: token));
         }
 
-        public async Task SetContentURL(string id, string url, CancellationToken token)
+        public async Task SetContentURLAsync(string id, string url, CancellationToken token)
         {
             await using var connection = new NpgsqlConnection(this.connectionString);
             var command = @"update media set content_url = @url where external_id = @id";
             await connection.ExecuteAsync(new CommandDefinition(command, new {id, url}, cancellationToken: token));
         }
 
-        public async Task<bool> CheckExists(string id, CancellationToken token)
+        public async Task<bool> CheckExistsAsync(string id, CancellationToken token)
         {
             await using var connection = new NpgsqlConnection(this.connectionString);
             var command = @"select count(*) from media where external_id = @id";

@@ -35,7 +35,7 @@ namespace Media.Test.IntegrationTests.Adapters
         public async Task GetById_WhenFetchValidIdAndRedisIsUp_ReturnsMedia()
         {
             var id = "UPj6SSMvaKIuXwnY";
-            var media = await this.cache.FetchById(id, CancellationToken.None);
+            var media = await this.cache.FetchByIdAsync(id, CancellationToken.None);
 
             media.ShouldNotBeNull();
             media.ShouldBeOfType<Media>();
@@ -47,7 +47,7 @@ namespace Media.Test.IntegrationTests.Adapters
         {
             var id = "UPj6SSMvaKIuXwnY";
             await this.cache.Connection.CloseAsync();
-            var media = await this.cache.FetchById(id, CancellationToken.None);
+            var media = await this.cache.FetchByIdAsync(id, CancellationToken.None);
 
             media.ShouldNotBeNull();
             media.ShouldBeOfType<Media>();
@@ -57,7 +57,7 @@ namespace Media.Test.IntegrationTests.Adapters
         [Fact]
         public async Task GetById_WhenFetchInValid_ReturnsNull()
         {
-            var media = await this.cache.FetchById("invalid_id", CancellationToken.None);
+            var media = await this.cache.FetchByIdAsync("invalid_id", CancellationToken.None);
             media.ShouldBeNull();
         }
 
@@ -68,10 +68,10 @@ namespace Media.Test.IntegrationTests.Adapters
             var id = "UPj6SSMvaKIuXwnY";
 
             // Act
-            await this.cache.Remove(id, CancellationToken.None);
+            await this.cache.RemoveAsync(id, CancellationToken.None);
 
             // Assert
-            var media = await this.cache.FetchById(id, CancellationToken.None);
+            var media = await this.cache.FetchByIdAsync(id, CancellationToken.None);
             media.ShouldBeNull();
         }
 
@@ -82,10 +82,10 @@ namespace Media.Test.IntegrationTests.Adapters
             var id = "UPj6SSMvaKIuXwnY";
 
             // Act
-            await this.cache.SetViewCount(id, 12, CancellationToken.None);
+            await this.cache.SetViewCountAsync(id, 12, CancellationToken.None);
 
             // Assert
-            var media = await this.cache.FetchById(id, CancellationToken.None);
+            var media = await this.cache.FetchByIdAsync(id, CancellationToken.None);
             media.ShouldNotBeNull();
             media.TotalViews.ShouldBe(12);
         }
@@ -98,10 +98,10 @@ namespace Media.Test.IntegrationTests.Adapters
             await this.cache.Connection.CloseAsync();
 
             // Act
-            await this.cache.SetViewCount(id, 12, CancellationToken.None);
+            await this.cache.SetViewCountAsync(id, 12, CancellationToken.None);
 
             // Assert
-            var media = await this.cache.FetchById(id, CancellationToken.None);
+            var media = await this.cache.FetchByIdAsync(id, CancellationToken.None);
             media.ShouldNotBeNull();
             media.TotalViews.ShouldBe(12);
         }
@@ -114,10 +114,10 @@ namespace Media.Test.IntegrationTests.Adapters
             var url = "url";
 
             // Act
-            await this.cache.SetContentURL(id, url, CancellationToken.None);
+            await this.cache.SetContentURLAsync(id, url, CancellationToken.None);
 
             // Assert
-            var media = await this.cache.FetchById(id, CancellationToken.None);
+            var media = await this.cache.FetchByIdAsync(id, CancellationToken.None);
             media.ShouldNotBeNull();
             media.ContentURL.ShouldNotBeNull();
             media.ContentURL.ShouldBe(url);
@@ -132,10 +132,10 @@ namespace Media.Test.IntegrationTests.Adapters
             await this.cache.Connection.CloseAsync();
 
             // Act
-            await this.cache.SetContentURL(id, url, CancellationToken.None);
+            await this.cache.SetContentURLAsync(id, url, CancellationToken.None);
 
             // Assert
-            var media = await this.cache.FetchById(id, CancellationToken.None);
+            var media = await this.cache.FetchByIdAsync(id, CancellationToken.None);
             media.ShouldNotBeNull();
             media.ContentURL.ShouldNotBeNull();
             media.ContentURL.ShouldBe(url);
@@ -151,10 +151,10 @@ namespace Media.Test.IntegrationTests.Adapters
             media.LanguageCode = "en";
 
             // Act
-            await this.cache.Save(media, CancellationToken.None);
+            await this.cache.SaveAsync(media, CancellationToken.None);
 
             // Assert
-            var res = await this.cache.FetchById(media.ExternalId, CancellationToken.None);
+            var res = await this.cache.FetchByIdAsync(media.ExternalId, CancellationToken.None);
             res.ShouldNotBeNull();
             res.ExternalId.ShouldBe(media.ExternalId);
             res.Title.ShouldBe(media.Title);

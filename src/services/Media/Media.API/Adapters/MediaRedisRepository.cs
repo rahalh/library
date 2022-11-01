@@ -33,9 +33,9 @@ namespace Media.API.Adapters
             this.logger = logger.ForContext<MediaRedisRepository>();
         }
 
-        public async Task Save(Media media, CancellationToken token) => await this.repo.Save(media, token);
+        public async Task SaveAsync(Media media, CancellationToken token) => await this.repo.SaveAsync(media, token);
 
-        public async Task<Media> FetchById(string id, CancellationToken token)
+        public async Task<Media> FetchByIdAsync(string id, CancellationToken token)
         {
             var cachedData = await this.GetValueAsync<Media>(this.Redis, GenerateKey(id));
             if (cachedData is not null)
@@ -43,25 +43,25 @@ namespace Media.API.Adapters
                 return cachedData;
             }
 
-            var media = await this.repo.FetchById(id, token);
+            var media = await this.repo.FetchByIdAsync(id, token);
             async Task action() => await this.Redis.StringSetAsync(GenerateKey(id), JsonSerializer.Serialize(media), TimeSpan.FromHours(1));
             await this.RunWithErrorHandler(action);
             return media;
         }
 
-        public async Task Remove(string id, CancellationToken token)
+        public async Task RemoveAsync(string id, CancellationToken token)
         {
-            await this.repo.Remove(id, token);
+            await this.repo.RemoveAsync(id, token);
             async Task action() => await this.Redis.KeyDeleteAsync(GenerateKey(id));
             await this.RunWithErrorHandler(action);
         }
 
-        public async Task<List<Media>> List(PaginationParams parameters, CancellationToken token) =>
-            await this.repo.List(parameters, token);
+        public async Task<List<Media>> ListAsync(PaginationParams parameters, CancellationToken token) =>
+            await this.repo.ListAsync(parameters, token);
 
-        public async Task SetViewCount(string id, int count, CancellationToken token)
+        public async Task SetViewCountAsync(string id, int count, CancellationToken token)
         {
-            await this.repo.SetViewCount(id, count, token);
+            await this.repo.SetViewCountAsync(id, count, token);
 
             var media = await this.GetValueAsync<Media>(this.Redis, GenerateKey(id));
             if (media is not null)
@@ -73,9 +73,9 @@ namespace Media.API.Adapters
             }
         }
 
-        public async Task SetContentURL(string id, string url, CancellationToken token)
+        public async Task SetContentURLAsync(string id, string url, CancellationToken token)
         {
-            await this.repo.SetContentURL(id, url, token);
+            await this.repo.SetContentURLAsync(id, url, token);
 
             var media = await this.GetValueAsync<Media>(this.Redis, GenerateKey(id));
             if (media is not null)
@@ -87,7 +87,7 @@ namespace Media.API.Adapters
             }
         }
 
-        public async Task<bool> CheckExists(string id, CancellationToken token) => await this.repo.CheckExists(id, token);
+        public async Task<bool> CheckExistsAsync(string id, CancellationToken token) => await this.repo.CheckExistsAsync(id, token);
 
         private async Task<TObject> GetValueAsync<TObject>(IDatabase cache, string key)
             where TObject : class

@@ -14,29 +14,27 @@ namespace Media.API.Core.Interactors
         public RemoveContentURLInteractor(IMediaRepository repo) => this.repo = repo;
 
         // Domain event (side-effect) does not contain a rollback operation
-        public async Task HandleAsync(string message, CancellationToken token)
+        public async Task HandleAsync(RemoveContentURLRequest request, CancellationToken token)
         {
-            var request = JsonSerializer.Deserialize<Request>(message);
-
-            var validationResults = new Request.Validator().Validate(request);
+            var validationResults = new RemoveContentURLRequest.Validator().Validate(request);
             if (!validationResults.IsValid)
             {
                 throw new ValidationException(JsonSerializer.Serialize(validationResults.ToDictionary()));
             }
 
-            var media = await this.repo.FetchById(request.Id, token);
+            var media = await this.repo.FetchByIdAsync(request.Id, token);
             if (media is null)
             {
                 throw new NotFoundException($"Can't find media with Id: {request.Id}");
             }
 
-            await this.repo.SetContentURL(request.Id, null, token);
+            await this.repo.SetContentURLAsync(request.Id, null, token);
         }
     }
 
-    public record Request(string Id)
+    public record RemoveContentURLRequest(string Id)
     {
-        public class Validator : AbstractValidator<Request>
+        public class Validator : AbstractValidator<RemoveContentURLRequest>
         {
             public Validator() =>
                 this.RuleFor(x => x.Id)

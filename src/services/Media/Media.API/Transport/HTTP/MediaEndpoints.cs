@@ -2,7 +2,7 @@ namespace Media.API.Ports.HTTP
 {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Routing;
-    using Handlers;
+    using Transport.HTTP.Handlers;
 
     public static class MediaEndpoints
     {

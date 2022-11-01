@@ -12,12 +12,12 @@ namespace Media.API.Core.Interactors
 
         public ListMediaInteractor(IMediaRepository repo) => this.repo = repo;
 
-        public async Task<ListMediaResponse> Handle(ListMediaRequest request, CancellationToken token)
+        public async Task<ListMediaResponse> HandleAsync(ListMediaRequest request, CancellationToken token)
         {
             var paginationParams = new PaginationParams(request.Token, request.PageSize);
             paginationParams.Size++;
 
-            var medias = await this.repo.List(paginationParams, token);
+            var medias = await this.repo.ListAsync(paginationParams, token);
 
             string nextToken = null;
             if (medias.Count > paginationParams.Size - 1)
