@@ -18,8 +18,6 @@ namespace Blob.Tests.IntegrationTests.Adapters
         [Fact]
         public async Task SaveBlob()
         {
-            // ForcePathStyle = true
-
             // Arrange
             var repo = new DDBRepository(new DDBSettings("blob", this.localstackUrl));
             var blob = new Blob("id", "Application", "pdf", 1024, "domain", "prefix");

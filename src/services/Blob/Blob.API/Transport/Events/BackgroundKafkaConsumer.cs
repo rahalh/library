@@ -1,6 +1,7 @@
-namespace Blob.API.Ports.Events
+namespace Blob.API.Transport.Events
 {
     using System;
+    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
     using Confluent.Kafka;
@@ -50,9 +51,10 @@ namespace Blob.API.Ports.Events
                     {
                         if (result.Topic == ConsumedEvents.MediaUpdateFailed)
                         {
-                            var handler = scope.ServiceProvider.GetRequiredService<SAGADeleteBlobInteractor>();
+                            var handler = scope.ServiceProvider.GetRequiredService<DeleteBlobSagaInteractor>();
                             message = result.Message.Value;
-                            await handler.HandleAsync(result.Message.Value, CancellationToken.None);
+                            var request = JsonSerializer.Deserialize<DeleteBlobSagaRequest>(message);
+                            await handler.HandleAsync(request, CancellationToken.None);
                         }
 
                         consumer.Commit(result);

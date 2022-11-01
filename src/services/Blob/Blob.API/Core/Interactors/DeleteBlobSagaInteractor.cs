@@ -7,29 +7,27 @@ namespace Blob.API.Core.Interactors
     using Exceptions;
     using Serilog;
 
-    public class SAGADeleteBlobInteractor
+    public class DeleteBlobSagaInteractor
     {
         private readonly IBlobRepository repo;
         private readonly IFileStore fileStore;
         private readonly ILogger logger;
 
-        public SAGADeleteBlobInteractor(ILogger logger, IBlobRepository repo, IFileStore fileStore)
+        public DeleteBlobSagaInteractor(ILogger logger, IBlobRepository repo, IFileStore fileStore)
         {
             this.repo = repo;
             this.fileStore = fileStore;
-            this.logger = logger.ForContext<SAGADeleteBlobInteractor>().ForContext("Method", $"{typeof(DeleteBlobInteractor).FullName}.{nameof(this.HandleAsync)}");
+            this.logger = logger.ForContext<DeleteBlobSagaInteractor>().ForContext("Method", $"{typeof(DeleteBlobInteractor).FullName}.{nameof(this.HandleAsync)}");
         }
 
-        public async Task HandleAsync(string message, CancellationToken token)
+        public async Task HandleAsync(DeleteBlobSagaRequest req, CancellationToken token)
         {
             try
             {
-                var request = JsonSerializer.Deserialize<Request>(message);
-
-                var blob = await this.repo.GetByIdAsync(request.Id, token);
+                var blob = await this.repo.GetByIdAsync(req.Id, token);
                 if (blob is null)
                 {
-                    throw new NotFoundException($"Can't find Blob with Id: {request.Id}");
+                    throw new NotFoundException($"Can't find Blob with Id: {req.Id}");
                 }
 
                 await this.repo.RemoveAsync(blob.Id, token);
@@ -41,7 +39,7 @@ namespace Blob.API.Core.Interactors
                 throw;
             }
         }
-
-        public record Request(string Id);
     }
+
+    public record DeleteBlobSagaRequest(string Id);
 }

@@ -40,6 +40,8 @@ namespace Blob.API.Core.Interactors
                 throw new ValidationException(JsonSerializer.Serialize(validationResult.ToDictionary()));
             }
 
+            // todo should we check if the blob already exists ?
+            // todo currently when presented with an Id that already exists this functions overwrites whatever data linked to that Id in both stores
             var blob = new Blob(request.Id, request.BlobType, request.Extension, request.Size, this.s3Settings.StorageDomain, this.s3Settings.Prefix);
             await this.fileStore.StoreAsync(blob.Name, request.Content, token);
             try
@@ -49,7 +51,7 @@ namespace Blob.API.Core.Interactors
             catch (Exception ex)
             {
                 // Rollback persistence
-                try { await this.fileStore.RemoveAsync(blob.Id, token); }
+                try { await this.fileStore.RemoveAsync(blob.Name, token); }
                 catch (Exception nestedEx) { this.logger.Error(nestedEx, nestedEx.Message); }
 
                 this.logger.Error(ex, ex.Message);
@@ -67,10 +69,10 @@ namespace Blob.API.Core.Interactors
             catch (Exception ex)
             {
                 // Rollback persistence
-                try { await this.fileStore.RemoveAsync(blob.Id, token); }
+                try { await this.fileStore.RemoveAsync(blob.Name, token); }
                 catch (Exception innerEx) { this.logger.Error(innerEx, innerEx.Message); }
 
-                try { await this.fileStore.RemoveAsync(blob.Id, token); }
+                try { await this.repo.RemoveAsync(blob.Id, token); }
                 catch (Exception innerEx) { this.logger.Error(innerEx, innerEx.Message); }
 
                 this.logger
@@ -78,13 +80,15 @@ namespace Blob.API.Core.Interactors
                     .Error(ex, "Failed to publish the event");
                 throw;
             }
-
+            // todo check blob.Name validity (S3 must have rules delimiting the kinds of strings that are allowed)
             return new BlobDTO(blob.Id, blob.Name, blob.Size, blob.BlobType, blob.Extension, blob.URL, blob.CreateTime, blob.UpdateTime);
         }
     }
 
+    /// <param name="Size">The contents size in bytes.</param>
     public record StoreBlobRequest(
         string Id,
+        // todo in Bytes
         long Size,
         string BlobType,
         string Extension,
@@ -108,27 +112,29 @@ namespace Blob.API.Core.Interactors
                     .When(x => !string.IsNullOrEmpty(x.BlobType));
 
                 this.RuleFor(x => x.Extension)
+                    .Cascade(CascadeMode.Stop)
                     .NotNull()
                     .MinimumLength(1)
                     .MaximumLength(8)
                     .Equal("pdf", StringComparer.OrdinalIgnoreCase)
-                    .When(x => EnumUtils.GetEnumValueOrDefault<BlobTypes>(x.BlobType) == BlobTypes.Application)
+                    .When(x => EnumUtils.GetEnumValueOrDefault<BlobTypes>(x.BlobType) == BlobTypes.Application, ApplyConditionTo.CurrentValidator)
                     .Must(x => new[] {"mpeg", "vorbis", "aac", "mp3", "ogg"}.Contains(Strings.LCase(x)))
-                    .When(x => EnumUtils.GetEnumValueOrDefault<BlobTypes>(x.BlobType) == BlobTypes.Audio)
+                    .When(x => EnumUtils.GetEnumValueOrDefault<BlobTypes>(x.BlobType) == BlobTypes.Audio, ApplyConditionTo.CurrentValidator)
                     .Must(x => new[] {"h264", "mp4", "mpeg", "ogg"}.Contains(Strings.LCase(x)))
-                    .When(x => EnumUtils.GetEnumValueOrDefault<BlobTypes>(x.BlobType) == BlobTypes.Video);
+                    .When(x => EnumUtils.GetEnumValueOrDefault<BlobTypes>(x.BlobType) == BlobTypes.Video, ApplyConditionTo.CurrentValidator);
 
                 this.RuleFor(x => x.Size)
+                    .Cascade(CascadeMode.Stop)
                     .NotNull()
                     // max 25 MB
                     .LessThan(25 * (long)Math.Pow(1024, 2))
-                    .When(x => EnumUtils.GetEnumValueOrDefault<BlobTypes>(x.BlobType) == BlobTypes.Application)
+                    .When(x => EnumUtils.GetEnumValueOrDefault<BlobTypes>(x.BlobType) == BlobTypes.Application, ApplyConditionTo.CurrentValidator)
                     // max 256 MB
                     .LessThan(256 * (long)Math.Pow(1024, 2))
-                    .When(x => EnumUtils.GetEnumValueOrDefault<BlobTypes>(x.BlobType) == BlobTypes.Audio)
+                    .When(x => EnumUtils.GetEnumValueOrDefault<BlobTypes>(x.BlobType) == BlobTypes.Audio, ApplyConditionTo.CurrentValidator)
                     // max 8 GB
                     .LessThan(8192 * (long)Math.Pow(1024, 2))
-                    .When(x => EnumUtils.GetEnumValueOrDefault<BlobTypes>(x.BlobType) == BlobTypes.Video);
+                    .When(x => EnumUtils.GetEnumValueOrDefault<BlobTypes>(x.BlobType) == BlobTypes.Video, ApplyConditionTo.CurrentValidator);
             }
         }
     };

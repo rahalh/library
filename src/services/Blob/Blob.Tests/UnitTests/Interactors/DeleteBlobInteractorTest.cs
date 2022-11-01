@@ -1,4 +1,4 @@
-namespace Blob.Tests.UnitTests
+namespace Blob.Tests.UnitTests.Interactors
 {
     using System.Threading;
     using API.Core;

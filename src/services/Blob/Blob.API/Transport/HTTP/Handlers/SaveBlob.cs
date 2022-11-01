@@ -1,4 +1,4 @@
-namespace Blob.API.Ports.HTTP.Handlers
+namespace Blob.API.Transport.HTTP.Handlers
 {
     using System.Collections.Generic;
     using System.Threading;

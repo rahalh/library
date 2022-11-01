@@ -1,4 +1,4 @@
-namespace Blob.API.Ports.HTTP
+namespace Blob.API.Transport.HTTP
 {
     using Handlers;
     using Microsoft.AspNetCore.Builder;

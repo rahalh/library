@@ -35,7 +35,7 @@ namespace Blob.API.Core
             this.URL = new UriBuilder() {
                 Host = storageDomain,
                 Scheme = "https",
-                Path = Strings.Join(new [] {prefix, "media", this.Name}, "/")!
+                Path = Strings.Join(new [] {prefix, this.Name}, "/")!
             }.Uri.ToString();
         }
 

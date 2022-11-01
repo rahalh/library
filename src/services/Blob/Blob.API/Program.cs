@@ -3,8 +3,8 @@ using Blob.API.Configuration;
 using Blob.API.Core;
 using Blob.API.Core.Interactors;
 using Blob.API.Middlewares;
-using Blob.API.Ports.Events;
-using Blob.API.Ports.HTTP;
+using Blob.API.Transport.Events;
+using Blob.API.Transport.HTTP;
 using Confluent.Kafka;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -38,7 +38,7 @@ builder.Services.AddSingleton<IBlobRepository, DDBRepository>();
 builder.Services.AddSingleton<DeleteBlobInteractor>();
 builder.Services.AddSingleton<StoreBlobInteractor>();
 builder.Services.AddSingleton<GetBlobByIdInteractor>();
-builder.Services.AddSingleton<SAGADeleteBlobInteractor>();
+builder.Services.AddSingleton<DeleteBlobSagaInteractor>();
 
 builder.Services.AddHostedService<BackgroundKafkaConsumer>();
 
