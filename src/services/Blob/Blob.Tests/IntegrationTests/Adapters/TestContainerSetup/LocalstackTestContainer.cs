@@ -1,4 +1,4 @@
-namespace Blob.Tests.IntegrationTests.Adapters
+namespace Blob.Tests.IntegrationTests.Adapters.TestContainerSetup
 {
     using System;
     using System.IO;
@@ -21,7 +21,7 @@ namespace Blob.Tests.IntegrationTests.Adapters
                 .WithImage("localstack/localstack")
                 .WithCleanUp(true)
                 .WithPortBinding(this.localstackport, 4566)
-                .WithBindMount(ToAbsolute("./IntegrationTests/scripts"), "/etc/localstack/init/ready.d", AccessMode.ReadOnly)
+                .WithBindMount(ToAbsolute("./IntegrationTests/Adapters/scripts"), "/etc/localstack/init/ready.d", AccessMode.ReadOnly)
                 .WithWaitStrategy(Wait.ForUnixContainer()
                 .UntilPortIsAvailable(4566)
                 .AddCustomWaitStrategy(new LocalstackContainerHealthCheck(this.LocalstackUri)))

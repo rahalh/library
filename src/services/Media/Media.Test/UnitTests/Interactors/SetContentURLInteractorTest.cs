@@ -33,9 +33,13 @@ namespace Media.Test.UnitTests.Interactors
             this.repo.Setup(x => x.CheckExistsAsync(id, CancellationToken.None)).ReturnsAsync(false);
 
             // Assert
-            await Should.ThrowAsync<NotFoundException>(async () => await this.interactor.HandleAsync(new SetContentURLRequest(id, URL), CancellationToken.None));
-            // todo also test event's content
-            this.eventProducer.Verify(x => x.ProduceAsync(It.Is<Event>(y => y.EventType == ProducedEvents.MediaUpdateFailed), CancellationToken.None), Times.Once);
+            await Should.ThrowAsync<NotFoundException>(async () =>
+                await this.interactor.HandleAsync(new SetContentURLRequest(id, URL), CancellationToken.None));
+            this.eventProducer.Verify(
+                x => x.ProduceAsync(
+                    It.Is<Event<MediaUpdateFailedEvent>>(y =>
+                        y.EventType == ProducedEvents.MediaUpdateFailed &&
+                        y.Content == new MediaUpdateFailedEvent(id, URL)), CancellationToken.None), Times.Once);
             this.repo.Verify(x => x.CheckExistsAsync(id, CancellationToken.None), Times.Once);
             this.repo.Verify(x => x.SetContentURLAsync(id, URL, CancellationToken.None), Times.Never);
         }
@@ -50,11 +54,17 @@ namespace Media.Test.UnitTests.Interactors
             this.repo.Setup(x => x.SetContentURLAsync(id, URL, CancellationToken.None)).Throws<Exception>();
 
             // Act
-            await Should.ThrowAsync<Exception>(async () => await this.interactor.HandleAsync(new SetContentURLRequest(id, URL), CancellationToken.None));
+            await Should.ThrowAsync<Exception>(async () =>
+                await this.interactor.HandleAsync(new SetContentURLRequest(id, URL), CancellationToken.None));
 
             // Assert
             // todo test event's content
-            this.eventProducer.Verify(x => x.ProduceAsync(It.Is<Event>(y => y.EventType == ProducedEvents.MediaUpdateFailed), CancellationToken.None), Times.Once);
+            this.eventProducer.Verify(
+                x => x.ProduceAsync(
+                    It.Is<Event<MediaUpdateFailedEvent>>(y =>
+                        y.EventType == ProducedEvents.MediaUpdateFailed &&
+                        y.Content == new MediaUpdateFailedEvent(id, URL)),
+                    CancellationToken.None), Times.Once);
             this.repo.Verify(x => x.CheckExistsAsync(id, CancellationToken.None), Times.Once);
             this.repo.Verify(x => x.SetContentURLAsync(id, URL, CancellationToken.None), Times.Once);
         }

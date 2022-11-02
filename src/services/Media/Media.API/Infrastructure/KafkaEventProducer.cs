@@ -1,4 +1,4 @@
-namespace Blob.API.Adapters
+namespace Media.API.Infrastructure
 {
     using System.Text.Json;
     using System.Threading;
@@ -12,12 +12,11 @@ namespace Blob.API.Adapters
 
         public KafkaEventProducer(IProducer<Null, string> producer) => this.producer = producer;
 
-        public async Task ProduceAsync(Event @event, CancellationToken token)
+        public async Task ProduceAsync<T>(Event<T> @event, CancellationToken token)
         {
             var topic = @event.EventType;
-            var message = new Message<Null, string> {Value = JsonSerializer.Serialize(@event)};
+            var message = new Message<Null, string>() {Value = JsonSerializer.Serialize(@event)};
             await this.producer.ProduceAsync(topic, message, token);
         }
     }
 }
-

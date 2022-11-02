@@ -4,8 +4,8 @@ namespace Media.API.Middleware
     using System.Net;
     using System.Text.Json;
     using System.Threading.Tasks;
-    using Adapters.Exceptions;
     using Core.Exceptions;
+    using Infrastructure.Exceptions;
     using Microsoft.AspNetCore.Http;
     using Serilog;
 

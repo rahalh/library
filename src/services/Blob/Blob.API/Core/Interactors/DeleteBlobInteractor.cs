@@ -45,7 +45,7 @@ namespace Blob.API.Core.Interactors
 
             try
             {
-                var @event = new Event(DateTime.UtcNow, ProducedEvents.BlobRemoved, new {req.Id});
+                var @event = new Event<BlobDeletedEventMessage>(DateTime.UtcNow, ProducedEvents.BlobRemoved, new BlobDeletedEventMessage(req.Id));
                 await this.eventProducer.ProduceAsync(@event, token);
 
                 this.logger
@@ -73,4 +73,6 @@ namespace Blob.API.Core.Interactors
                     .MaximumLength(30);
         }
     };
+
+    public record BlobDeletedEventMessage(string Id);
 }

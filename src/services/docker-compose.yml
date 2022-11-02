@@ -4,36 +4,39 @@ services:
   # Microservices
   #
   media:
+    image: ${REGISTRY:-rahalh}/media.api:${TAG:-latest}
     build: ./Media/Media.API
-    hostname: media.lib.com
-    image: lib-media
-    restart: always
-    volumes:
-      - api:/usr/src/media/
+    restart: unless-stopped
     ports:
-      - "3002:8080"
+      - "3000:80"
     depends_on:
       - postgres
       - redis
-#      - kafka
-#      - zipkin
-    networks:
-      - lib-tier
+      - kafka
+      - init-kafka
+
+  blob:
+    image: ${REGISTRY:-rahalh}/blob.api:${TAG:-latest}
+    build: ./Blob/Blob.API
+    restart: unless-stopped
+    ports:
+      - "3001:80"
+    depends_on:
+      - kafka
+      - init-kafka
 
   #
   # Infrastructure
   #
   redis:
     image: redis:alpine
-    restart: on-failure
+    restart: unless-stopped
     ports:
       - "6380:6379"
-    networks:
-      - lib-tier
 
   postgres:
     image: "postgres:12.2-alpine"
-    restart: on-failure
+    restart: unless-stopped
     ports:
       - "5431:5432"
     environment:
@@ -41,85 +44,55 @@ services:
       - POSTGRES_PASSWORD=root
     volumes:
       - ./Media/Media.API/migrations/:/docker-entrypoint-initdb.d/
-    networks:
-      - lib-tier
-
-  zipkin:
-    image: "openzipkin/zipkin"
-    restart: on-failure
-    ports:
-      - "9412:9411"
-    networks:
-      - lib-tier
-
-  prometheus:
-    image: "prom/prometheus"
-    restart: on-failure
-    ports:
-      - 9090:9090
-    volumes:
-      - ./third-party/prometheus:/etc/prometheus
-    networks:
-      - lib-tier
-
-  grafana:
-    image: "grafana/grafana"
-    depends_on:
-      - prometheus
-      - zipkin
-      - postgres
-    restart: on-failure
-    ports:
-      - "9413:3000"
-    networks:
-      - lib-tier
 
   zookeeper:
     image: "bitnami/zookeeper:latest"
-    restart: on-failure
+    restart: unless-stopped
     ports:
       - "2182:2181"
     environment:
-      - ZOO_ENABLE_AUTH=no
-      - ZOO_SERVER_USERS=kafka
-      - ZOO_SERVER_PASSWORDS=root
-      - ALLOW_ANONYMOUS_LOGIN=yes
+      ALLOW_ANONYMOUS_LOGIN: "true"
     volumes:
       - ./third-party/zookeeper/:/bitnami/zookeeper
-    networks:
-      - lib-tier
 
   kafka:
     image: "bitnami/kafka:latest"
-    restart: on-failure
+    restart: unless-stopped
     depends_on:
       - zookeeper
     ports:
-      - "9093:9092"
+      - "9092:9092"
     environment:
+      - KAFKA_BROKER_ID=1
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,PLAINTEXT_HOST://:29092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      - KAFKA_ZOOKEEPER_USER=kafka
-      - KAFKA_ZOOKEEPER_PASSWORD=root
-      - KAFKA_INTER_BROKER_USER=interuser
-      - KAFKA_INTER_BROKER_PASSWORD=interpassword
-      - KAFKA_BROKER_USER=user
-      - KAFKA_BROKER_PASSWORD=password
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
     volumes:
       - ./third-party/kafka/:/bitnami/kafka
-    networks:
-      - lib-tier
+
+  init-kafka:
+    image: "bitnami/kafka:latest"
+    depends_on:
+      - kafka
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics --bootstrap-server kafka:9092 --list
+
+      echo -e 'Creating kafka topics'
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic BLOB_UPLOADED --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic BLOB_REMOVED --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic MEDIA_REMOVED --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic MEDIA_UPDATE_FAILED --replication-factor 1 --partitions 1
+
+      echo -e 'Successfully created the following topics:'
+      kafka-topics --bootstrap-server kafka:9092 --list
+      "
 
 volumes:
-  api:
-    driver: local
   database_postgres:
     driver: local
-
-# Networks to be created to facilitate communication between containers
-networks:
-  lib-tier:
-    driver: bridge

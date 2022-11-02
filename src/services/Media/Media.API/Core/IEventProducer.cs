@@ -12,19 +12,19 @@ namespace Media.API.Core
 
     public static class ConsumedEvents
     {
-        public const string BlobUploaded = "MEDIA_BLOB_UPLOADED";
-        public const string BlobRemoved = "MEDIA_BLOB_REMOVED";
+        public const string BlobUploaded = "BLOB_UPLOADED";
+        public const string BlobRemoved = "BLOB_REMOVED";
     }
 
-    public record Event(
+    public record Event<T> (
         DateTime DispatchTime,
         string EventType,
         string ServiceName,
-        object Content
+        T Content
     );
 
     public interface IEventProducer
     {
-        public Task ProduceAsync(Event @event, CancellationToken token);
+        public Task ProduceAsync<T>(Event<T> @event, CancellationToken token);
     }
 }

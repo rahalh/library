@@ -1,12 +1,12 @@
-namespace Media.API.Adapters
+namespace Media.API.Infrastructure
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Configuration;
+    using Core;
     using Dapper;
     using Exceptions;
-    using Media.API.Core;
     using Npgsql;
 
     public class MediaPgRepository : IMediaRepository

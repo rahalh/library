@@ -1,4 +1,4 @@
-namespace Media.API.Adapters.Exceptions
+namespace Media.API.Infrastructure.Exceptions
 {
     using System;
 

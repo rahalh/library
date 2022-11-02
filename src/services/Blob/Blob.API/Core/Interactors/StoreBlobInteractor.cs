@@ -40,8 +40,6 @@ namespace Blob.API.Core.Interactors
                 throw new ValidationException(JsonSerializer.Serialize(validationResult.ToDictionary()));
             }
 
-            // todo should we check if the blob already exists ?
-            // todo currently when presented with an Id that already exists this functions overwrites whatever data linked to that Id in both stores
             var blob = new Blob(request.Id, request.BlobType, request.Extension, request.Size, this.s3Settings.StorageDomain, this.s3Settings.Prefix);
             await this.fileStore.StoreAsync(blob.Name, request.Content, token);
             try
@@ -60,7 +58,11 @@ namespace Blob.API.Core.Interactors
 
             try
             {
-                var @event = new Event(DateTime.UtcNow, ProducedEvents.BlobUploaded, new {blob.Id, blob.URL});
+                var @event = new Event<BlobUploadedEventMessage>(
+                    DateTime.UtcNow,
+                    ProducedEvents.BlobUploaded,
+                    new BlobUploadedEventMessage(blob.Id, blob.URL)
+                );
                 await this.eventProducer.ProduceAsync(@event, token);
                 this.logger
                     .ForContext("EventType", ProducedEvents.BlobUploaded)
@@ -88,7 +90,6 @@ namespace Blob.API.Core.Interactors
     /// <param name="Size">The contents size in bytes.</param>
     public record StoreBlobRequest(
         string Id,
-        // todo in Bytes
         long Size,
         string BlobType,
         string Extension,
@@ -138,4 +139,6 @@ namespace Blob.API.Core.Interactors
             }
         }
     };
+
+    public record BlobUploadedEventMessage(string Id, string URL);
 }

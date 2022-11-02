@@ -3,7 +3,6 @@ namespace Media.Test.IntegrationTests
     using System;
     using System.IO;
     using System.Threading.Tasks;
-    using API.Adapters;
     using API.Configuration;
     using API.Core;
     using DotNet.Testcontainers.Builders;

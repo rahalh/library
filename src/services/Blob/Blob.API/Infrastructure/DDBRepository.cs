@@ -1,15 +1,13 @@
-namespace Blob.API.Adapters
+namespace Blob.API.Infrastructure
 {
     using System;
     using System.Collections.Generic;
-    using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
     using Amazon.DynamoDBv2;
     using Amazon.DynamoDBv2.Model;
     using Configuration;
     using Core;
-    using Microsoft.Extensions.Configuration;
 
     public class DDBRepository : IBlobRepository
     {

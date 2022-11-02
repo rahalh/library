@@ -4,9 +4,9 @@ namespace Media.Test.IntegrationTests.Adapters
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using API.Adapters;
     using API.Configuration;
     using API.Core;
+    using API.Infrastructure;
     using AutoFixture;
     using IntegrationTests.Helpers;
     using Shouldly;

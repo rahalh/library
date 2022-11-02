@@ -2,7 +2,6 @@ namespace Media.API.Core.Interactors
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Adapters.Exceptions;
     using Exceptions;
 
     public class GetMediaInteractor

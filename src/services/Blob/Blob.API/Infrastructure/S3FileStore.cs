@@ -1,4 +1,4 @@
-namespace Blob.API.Adapters
+namespace Blob.API.Infrastructure
 {
     using System.IO;
     using System.Threading;

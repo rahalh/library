@@ -4,6 +4,7 @@ namespace Media.API.Core.Interactors
     using System.Threading;
     using System.Threading.Tasks;
     using System.Transactions;
+    using Exceptions;
     using Serilog;
 
     public class DeleteMediaInteractor
@@ -23,11 +24,17 @@ namespace Media.API.Core.Interactors
 
         public async Task HandleAsync(DeleteMediaRequest request, CancellationToken token)
         {
+            var exists = await this.repo.CheckExistsAsync(request.Id, token);
+            if (!exists)
+            {
+                throw new NotFoundException($"Can't find Media with Id: {request.Id}");
+            }
+
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             await this.repo.RemoveAsync(request.Id, token);
             try
             {
-                var @event = new Event(DateTime.UtcNow, ProducedEvents.MediaRemoved, "Media", request.Id);
+                var @event = new Event<DeleteMediaEvent>(DateTime.UtcNow, ProducedEvents.MediaRemoved, "Media", new DeleteMediaEvent(request.Id));
                 await this.eventProducer.ProduceAsync(@event, token);
 
                 this.logger
@@ -46,4 +53,6 @@ namespace Media.API.Core.Interactors
     }
 
     public record DeleteMediaRequest(string Id);
+
+    public record DeleteMediaEvent(string Id);
 }

@@ -59,14 +59,17 @@ namespace Blob.Tests.UnitTests.Interactors
             var content = new MemoryStream();
             var req = new StoreBlobRequest("valid_id", 12000, BlobTypes.Application.ToString(), "PDF", content);
             var blob = new Blob(req.Id, req.BlobType, req.Extension, req.Size, this.s3Settings.StorageDomain, this.s3Settings.Prefix);
-            var @event = new Event(DateTime.Now, ProducedEvents.BlobUploaded, new {blob.Id, blob.URL});
+            var message = new BlobUploadedEventMessage(blob.Id, blob.URL);
+            var @event = new Event<BlobUploadedEventMessage>(DateTime.Now, ProducedEvents.BlobUploaded, message);
 
             var res = await this.interactor.HandleAsync(req, CancellationToken.None);
 
             this.fileStore.Verify(x => x.StoreAsync(blob.Name, req.Content, CancellationToken.None), Times.Once);
             this.repo.Verify(x => x.SaveAsync(It.Is<Blob>(y => y.Id == blob.Id), CancellationToken.None), Times.Once);
-            // todo should also test event's content (not trivial when content type is object)
-            this.eventProducer.Verify(x => x.ProduceAsync(It.Is<Event>(y => y.EventType == @event.EventType), CancellationToken.None), Times.Once);
+            this.eventProducer.Verify(x =>
+                x.ProduceAsync(It.Is<Event<BlobUploadedEventMessage>>(y =>
+                    y.EventType == @event.EventType && y.Content == message
+                ), CancellationToken.None), Times.Once);
 
             res.ShouldNotBeNull();
             res.Id.ShouldBe(blob.Id);
@@ -92,7 +95,7 @@ namespace Blob.Tests.UnitTests.Interactors
 
             this.fileStore.Verify(x => x.StoreAsync(blob.Name, req.Content, CancellationToken.None), Times.Once);
             this.repo.Verify(x => x.SaveAsync(It.IsAny<Blob>(), CancellationToken.None), Times.Never);
-            this.eventProducer.Verify(x => x.ProduceAsync(It.IsAny<Event>(), CancellationToken.None), Times.Never);
+            this.eventProducer.Verify(x => x.ProduceAsync(It.IsAny<Event<It.IsAnyType>>(), CancellationToken.None), Times.Never);
         }
 
         [Fact]
@@ -110,7 +113,7 @@ namespace Blob.Tests.UnitTests.Interactors
 
             this.fileStore.Verify(x => x.StoreAsync(blob.Name, req.Content, CancellationToken.None), Times.Once);
             this.repo.Verify(x => x.SaveAsync(It.Is<Blob>(y => y.Id == req.Id), CancellationToken.None), Times.Once);
-            this.eventProducer.Verify(x => x.ProduceAsync(It.IsAny<Event>(), CancellationToken.None), Times.Never);
+            this.eventProducer.Verify(x => x.ProduceAsync(It.IsAny<Event<It.IsAnyType>>(), CancellationToken.None), Times.Never);
 
             // check rollback ops
             this.fileStore.Verify(x => x.RemoveAsync(blob.Name, CancellationToken.None), Times.Once);
@@ -124,14 +127,14 @@ namespace Blob.Tests.UnitTests.Interactors
             var req = new StoreBlobRequest("valid_id", 12000, BlobTypes.Application.ToString(), "PDF", content);
             var blob = new Blob(req.Id, req.BlobType, req.Extension, req.Size, this.s3Settings.StorageDomain, this.s3Settings.Prefix);
 
-            this.eventProducer.Setup(x => x.ProduceAsync(It.IsAny<Event>(), CancellationToken.None)).Throws<Exception>();
+            this.eventProducer.Setup(x => x.ProduceAsync(It.IsAny<Event<It.IsAnyType>>(), CancellationToken.None)).Throws<Exception>();
 
             // Act + Assert
             await Should.ThrowAsync<Exception>(async () => await this.interactor.HandleAsync(req, CancellationToken.None));
 
             this.fileStore.Verify(x => x.StoreAsync(blob.Name, req.Content, CancellationToken.None), Times.Once);
             this.repo.Verify(x => x.SaveAsync(It.Is<Blob>(y => y.Id == req.Id), CancellationToken.None), Times.Once);
-            this.eventProducer.Verify(x => x.ProduceAsync(It.IsAny<Event>(), CancellationToken.None), Times.Once);
+            this.eventProducer.Verify(x => x.ProduceAsync(It.IsAny<Event<It.IsAnyType>>(), CancellationToken.None), Times.Once);
 
             // check rollback ops
             this.fileStore.Verify(x => x.RemoveAsync(blob.Name, CancellationToken.None), Times.Once);
@@ -146,7 +149,7 @@ namespace Blob.Tests.UnitTests.Interactors
             var req = new StoreBlobRequest("valid_id", 12000, BlobTypes.Application.ToString(), "PDF", content);
             var blob = new Blob(req.Id, req.BlobType, req.Extension, req.Size, this.s3Settings.StorageDomain, this.s3Settings.Prefix);
 
-            this.eventProducer.Setup(x => x.ProduceAsync(It.IsAny<Event>(), CancellationToken.None)).Throws<Exception>();
+            this.eventProducer.Setup(x => x.ProduceAsync(It.IsAny<Event<It.IsAnyType>>(), CancellationToken.None)).Throws<Exception>();
             this.fileStore.Setup(x => x.RemoveAsync(It.IsAny<string>(), CancellationToken.None)).Throws<Exception>();
 
             // Act + Assert
@@ -154,7 +157,7 @@ namespace Blob.Tests.UnitTests.Interactors
 
             this.fileStore.Verify(x => x.StoreAsync(blob.Name, req.Content, CancellationToken.None), Times.Once);
             this.repo.Verify(x => x.SaveAsync(It.Is<Blob>(y => y.Id == req.Id), CancellationToken.None), Times.Once);
-            this.eventProducer.Verify(x => x.ProduceAsync(It.IsAny<Event>(), CancellationToken.None), Times.Once);
+            this.eventProducer.Verify(x => x.ProduceAsync(It.IsAny<Event<It.IsAnyType>>(), CancellationToken.None), Times.Once);
 
             // check rollback ops
             this.repo.Verify(x => x.RemoveAsync(req.Id, CancellationToken.None), Times.Once);

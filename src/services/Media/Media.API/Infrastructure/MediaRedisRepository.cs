@@ -1,4 +1,4 @@
-namespace Media.API.Adapters
+namespace Media.API.Infrastructure
 {
     using System;
     using System.Collections.Generic;

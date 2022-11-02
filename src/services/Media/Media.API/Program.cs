@@ -1,8 +1,8 @@
 using Confluent.Kafka;
-using Media.API.Adapters;
 using Media.API.Configuration;
 using Media.API.Core;
 using Media.API.Core.Interactors;
+using Media.API.Infrastructure;
 using Media.API.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,6 +44,7 @@ var app = builder.Build();
 // TODO add swagger
 // TODO document endpoints
 
+// todo fixme
 app.UsePathBase("/api");
 
 app.UseMiddleware<ErrorHandlingMiddleware>();

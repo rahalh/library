@@ -47,7 +47,12 @@ namespace Media.API.Core.Interactors
                 this.logger.Error(ex, ex.Message);
                 try
                 {
-                    var @event = new Event(DateTime.UtcNow, ProducedEvents.MediaUpdateFailed, "Media", request);
+                    var @event = new Event<MediaUpdateFailedEvent>(
+                        DateTime.UtcNow,
+                        ProducedEvents.MediaUpdateFailed,
+                        "Media",
+                        new MediaUpdateFailedEvent(request.Id, request.URL)
+                    );
                     await this.eventProducer.ProduceAsync(@event, token);
                 }
                 catch (Exception innerEx)
@@ -79,4 +84,6 @@ namespace Media.API.Core.Interactors
             }
         }
     };
+
+    public record MediaUpdateFailedEvent(string Id, string URL);
 }

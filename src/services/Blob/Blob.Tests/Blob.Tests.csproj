@@ -33,9 +33,6 @@
     <None Update="IntegrationTests\scripts\S3\init.sh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="IntegrationTests\scripts\init.sh">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

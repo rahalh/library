@@ -15,14 +15,14 @@ namespace Blob.API.Core
         public static readonly string MediaUpdateFailed = "MEDIA_UPDATE_FAILED";
     }
 
-    public record Event(
+    public record Event<T>(
         DateTime DispatchTime,
         string EventType,
-        object Content
+        T Content
     );
 
     public interface IEventProducer
     {
-        public Task ProduceAsync(Event @event, CancellationToken token);
+        public Task ProduceAsync<T>(Event<T> @event, CancellationToken token);
     }
 }

@@ -1,5 +1,6 @@
 namespace Blob.Tests.UnitTests.Interactors
 {
+    using System;
     using System.Threading;
     using API.Core;
     using API.Core.Exceptions;
@@ -27,10 +28,21 @@ namespace Blob.Tests.UnitTests.Interactors
         [Fact]
         public async void DeleteBlob_WhenBlobExists_DeletesBlob()
         {
-            var blob = new Blob("Id", "Application", "PDF", 1200, "bucketName.eu-west", "");
-            this.repo.Setup(x => x.GetByIdAsync(blob.Id, CancellationToken.None)).ReturnsAsync(blob);
+            // Arrange
+            var sampleBlob = new Blob("Id", "Application", "PDF", 1200, "bucketName.eu-west", "");
+            this.repo.Setup(x => x.GetByIdAsync(sampleBlob.Id, CancellationToken.None)).ReturnsAsync(sampleBlob);
 
-            await Should.NotThrowAsync(async () => await this.interactor.HandleAsync(new DeleteBlobRequest(blob.Id), CancellationToken.None));
+            // Act
+            await Should.NotThrowAsync(async () => await this.interactor.HandleAsync(new DeleteBlobRequest(sampleBlob.Id), CancellationToken.None));
+
+            // Assert
+            this.repo.Verify(x => x.RemoveAsync(sampleBlob.Id, CancellationToken.None), Times.Once);
+            this.fileStore.Verify(x => x.RemoveAsync(sampleBlob.Name, CancellationToken.None), Times.Once);
+            this.eventProducer.Verify(x =>
+                x.ProduceAsync(It.Is<Event<BlobDeletedEventMessage>>(x =>
+                    x.EventType == ProducedEvents.BlobRemoved && x.Content == new BlobDeletedEventMessage(sampleBlob.Id)
+                ), CancellationToken.None), Times.Once
+            );
         }
 
         [Fact]
@@ -39,6 +51,22 @@ namespace Blob.Tests.UnitTests.Interactors
             var blob = new Blob("Id", "Application", "PDF", 1200, "bucketName.eu-west", "");
             this.repo.Setup(x => x.GetByIdAsync(blob.Id, CancellationToken.None)).ReturnsAsync((Blob) null);
             await Should.ThrowAsync<NotFoundException>(async () => await this.interactor.HandleAsync(new DeleteBlobRequest(blob.Id), CancellationToken.None));
+        }
+
+        [Fact]
+        public async void WhenAnOperationFails_ThrowsException()
+        {
+            // Arrange
+            var sampleBlob = new Blob("Id", "Application", "PDF", 1200, "bucketName.eu-west", "");
+            this.repo.Setup(x => x.GetByIdAsync(sampleBlob.Id, CancellationToken.None)).ReturnsAsync(sampleBlob);
+            this.fileStore.Setup(x => x.RemoveAsync(sampleBlob.Name, CancellationToken.None)).Throws<Exception>();
+
+            // Act
+            await Should.ThrowAsync<Exception>(async () => await this.interactor.HandleAsync(new DeleteBlobRequest(sampleBlob.Id), CancellationToken.None));
+
+            // Assert
+            this.repo.Verify(x => x.RemoveAsync(sampleBlob.Id, CancellationToken.None), Times.Never);
+            this.eventProducer.Verify(x => x.ProduceAsync(It.IsAny<Event<It.IsAnyType>>(), CancellationToken.None), Times.Never);
         }
     }
 }

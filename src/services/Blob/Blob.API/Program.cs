@@ -1,7 +1,7 @@
-using Blob.API.Adapters;
 using Blob.API.Configuration;
 using Blob.API.Core;
 using Blob.API.Core.Interactors;
+using Blob.API.Infrastructure;
 using Blob.API.Middlewares;
 using Blob.API.Transport.Events;
 using Blob.API.Transport.HTTP;

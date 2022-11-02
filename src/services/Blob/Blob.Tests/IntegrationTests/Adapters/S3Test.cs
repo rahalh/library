@@ -5,9 +5,10 @@ namespace Blob.Tests.IntegrationTests.Adapters
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    using API.Adapters;
     using API.Configuration;
+    using API.Infrastructure;
     using Shouldly;
+    using TestContainerSetup;
     using Xunit;
 
     [Collection(nameof(LocalstackTestContainer))]
