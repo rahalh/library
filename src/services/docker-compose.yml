@@ -5,7 +5,7 @@ services:
   #
   media:
     image: ${REGISTRY:-rahalh}/media.api:${TAG:-latest}
-    build: ./Media/Media.API
+    build: ./Media
     restart: unless-stopped
     ports:
       - "3000:80"
@@ -17,7 +17,7 @@ services:
 
   blob:
     image: ${REGISTRY:-rahalh}/blob.api:${TAG:-latest}
-    build: ./Blob/Blob.API
+    build: ./Blob
     restart: unless-stopped
     ports:
       - "3001:80"
@@ -42,8 +42,8 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
-    volumes:
-      - ./Media/Media.API/migrations/:/docker-entrypoint-initdb.d/
+#    volumes:
+#      - ./Media/Media.API/migrations/:/docker-entrypoint-initdb.d/
 
   zookeeper:
     image: "bitnami/zookeeper:latest"

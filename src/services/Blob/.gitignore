@@ -1,24 +1,25 @@
 # compiled output
-bin/*
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-[Aa]rtefacts/
-[Aa]rtifacts/
-Deployment/[Aa]rtefacts
-tools/
-x64/
-x86/
-build/
-bld/
-[Bb]in/
-[Oo]bj/
-[Oo]ut/
-/dist
-/tmp
-/out-tsc
-/wwwroot
+**/bin/*
+**/obj/*
+**/[Dd]ebug/
+**/[Dd]ebugPublic/
+**/[Rr]elease/
+**/[Rr]eleases/
+**/[Aa]rtefacts/
+**/[Aa]rtifacts/
+**/Deployment/[Aa]rtefacts
+**/tools/
+**/x64/
+**/x86/
+**/build/
+**/bld/
+**/[Bb]in/
+**/[Oo]bj/
+**/[Oo]ut/
+**//dist
+**/tmp
+**/out-tsc
+**/wwwroot
 # Only exists if Bazel was run
 /bazel-out
 
@@ -26,9 +27,9 @@ bld/
 chrome-profiler-events*.json
 
 # IDEs and editors
+**/.idea
+**/*.iml
 .idea
-*.iml
-/.idea
 .project
 .classpath
 .c9/
