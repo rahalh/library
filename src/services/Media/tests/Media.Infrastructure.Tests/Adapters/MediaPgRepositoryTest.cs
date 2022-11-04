@@ -48,7 +48,7 @@ namespace Media.Infrastructure.Tests.Adapters
             var media = res.ToList();
 
             res.ShouldNotBeNull();
-            res.ShouldBeOfType<IEnumerable<Media>>();
+            media.ShouldBeOfType<List<Media>>();
             media.Count.ShouldBe(2);
             media[0].ExternalId.ShouldBe(id);
             media.Select(x => x.UpdateTime).ShouldBeInOrder(SortDirection.Descending);

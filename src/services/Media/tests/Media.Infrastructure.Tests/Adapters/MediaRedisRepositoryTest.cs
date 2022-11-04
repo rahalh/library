@@ -146,7 +146,7 @@ namespace Media.Infrastructure.Tests.Adapters
             // Arrange
             var fixture = new Fixture();
             var media = fixture.Create<Media>();
-            media.MediaType = "Book";
+            media.MediaType = "BOOK";
             media.LanguageCode = "en";
 
             // Act

@@ -1,24 +1,25 @@
-name: API (.NET 6.0)
+name: blob-api
 
 on:
+  workflow_dispatch:
   push:
     branches: [master, dev]
-  pull_request:
-    branches: [master, dev]
+    paths:
+      - src/services/Blob/**
+      - .github/workflows/blob-api.yml
+
+env:
+  SERVICE: blob-api
+  IMAGE: blob.api
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      working-directory: ./src/services/Media
+      working-directory: src/services/Blob
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Extract Branch Name
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
 
       - name: Setup .NET 6.0
         uses: actions/setup-dotnet@v1

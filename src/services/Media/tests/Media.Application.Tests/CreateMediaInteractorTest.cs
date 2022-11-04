@@ -58,7 +58,7 @@ namespace Media.Application.Tests
             res.MediaType.ShouldBe(request.MediaType, StringCompareShould.IgnoreCase);
             res.ExternalId.ShouldNotBeNullOrEmpty();
             res.TotalViews.ShouldBe(0);
-            res.PublishDate.ShouldBe(request.PublishDate);
+            res.PublishDate.ShouldBe(request.PublishDate!.Value);
         }
     }
 }
