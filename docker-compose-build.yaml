@@ -1,0 +1,11 @@
+version: "3"
+services:
+  media:
+    build:
+      context: ./src/services/Media
+    image: media
+
+  blob:
+    build:
+      context: ./src/services/Blob
+    image: blob

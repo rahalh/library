@@ -1,4 +1,4 @@
-name: blob-api
+name: "Build, test and deploy the Blob API"
 
 on:
   workflow_dispatch:
@@ -37,3 +37,14 @@ jobs:
       - name: Test
         run: dotnet test --no-restore --verbosity normal
         working-directory: ${{env.working-directory}}
+
+      - name: Deploy
+        if: ${{ github.ref_name == 'main' }}
+        uses: ./.github/workflows/composite
+        with:
+          service: ${{ env.SERVICE }}
+          registry_host: ${{ secrets.REGISTRY_HOST }}
+          registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
+          image_name: ${{ env.IMAGE }}
+          registry_username: ${{ secrets.USERNAME }}
+          registry_password: ${{ secrets.PASSWORD }}
