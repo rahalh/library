@@ -3,7 +3,7 @@ name: media-api
 on:
   workflow_dispatch:
   push:
-    branches: [master, dev]
+    branches: [main, dev]
     paths:
       - src/services/Media/**
       - .github/workflows/media-api.yml
