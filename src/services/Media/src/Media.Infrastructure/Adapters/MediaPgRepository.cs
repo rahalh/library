@@ -88,7 +88,7 @@ namespace Media.Infrastructure.Adapters
             await connection.ExecuteAsync(new CommandDefinition(command, new {id}, cancellationToken: token));
         }
 
-        public async Task<IEnumerable<Media>> ListAsync(PaginationParams parameters, CancellationToken token)
+        public async Task<IReadOnlyList<Media>> ListAsync(PaginationParams parameters, CancellationToken token)
         {
             await using var connection = new NpgsqlConnection(this.connectionString);
             var query = @"
@@ -108,8 +108,9 @@ namespace Media.Infrastructure.Adapters
                 order by update_time desc
                 fetch first @size rows only";
 
-            return await connection.QueryAsync<Media>(new CommandDefinition(query,
+            var res = await connection.QueryAsync<Media>(new CommandDefinition(query,
                 new {parameters.Token, parameters.Size}, cancellationToken: token));
+            return res.AsList();
         }
 
         public async Task SetViewCountAsync(string id, int viewCount, CancellationToken token)

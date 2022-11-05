@@ -1,17 +1,5 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=900c93ef_002D5c04_002D4398_002D9c43_002D4ab01e8e8c06/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d6dc804b_002Dadf4_002D491a_002D8432_002D1f2242fd077f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Solution /&gt;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a3b1fa3c_002Da357_002D4c6f_002Db340_002D508812d91f44/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="DeleteBlobInteractorTest #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Solution /&gt;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=bfdefd31_002D9870_002D4c82_002D9f69_002Dccb58488ed39/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DeleteBlobInteractorTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::D941EBB6-5224-49A2-A71C-AC59F2BD0BC9::net6.0::Blob.Application.Tests.DeleteBlobInteractorTest&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e1c1b63e_002D6264_002D449e_002D9297_002D84ea6d05a01f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DeleteBlobInteractorTest #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::D941EBB6-5224-49A2-A71C-AC59F2BD0BC9::net6.0::Blob.Application.Tests.DeleteBlobInteractorTest&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

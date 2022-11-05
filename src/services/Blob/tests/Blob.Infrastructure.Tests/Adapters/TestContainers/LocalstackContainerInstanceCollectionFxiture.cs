@@ -1,4 +1,4 @@
-namespace Blob.Infrastructure.Tests.Adapters.TestContainerSetup
+namespace Blob.Infrastructure.Tests.Adapters.TestContainers
 {
     using Xunit;
 

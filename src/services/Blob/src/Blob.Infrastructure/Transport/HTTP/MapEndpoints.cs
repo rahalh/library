@@ -8,9 +8,9 @@ namespace Blob.Infrastructure.Transport.HTTP
     {
         public static IEndpointRouteBuilder MapBlobEndpoints(this IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapPost("/api/blobs/media/{id:alpha}", SaveBlob.Handler);
-            endpoints.MapDelete("/api/blobs/media/{id:alpha}", DeleteBlob.Handler);
-            endpoints.MapGet("/api/blobs/media/{id:alpha}", GetBlob.Handler);
+            endpoints.MapPost("/api/blobs/media/{id}", SaveBlob.Handler);
+            endpoints.MapDelete("/api/blobs/media/{id}", DeleteBlob.Handler);
+            endpoints.MapGet("/api/blobs/media/{id}", GetBlob.Handler);
 
             return endpoints;
         }

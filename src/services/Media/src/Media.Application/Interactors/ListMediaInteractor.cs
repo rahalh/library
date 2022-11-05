@@ -1,13 +1,11 @@
 namespace Media.Application.Interactors
 {
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Domain;
     using Domain.Services;
-    using FluentValidation;
 
     public class ListMediaInteractor
     {
@@ -23,10 +21,10 @@ namespace Media.Application.Interactors
             var medias = await this.repo.ListAsync(paginationParams, token);
 
             string? nextToken = null;
-            if (medias.Count() > paginationParams.Size - 1)
+            if (medias.Count > paginationParams.Size - 1)
             {
-                nextToken = medias.LastOrDefault()?.ExternalId;
-                medias = medias.SkipLast(1);
+                nextToken = medias[medias.Count - 1].ExternalId;
+                medias = medias.SkipLast(1).ToList();
             }
 
             return new ListMediaResponse(medias.Select(x => new MediaDTO(

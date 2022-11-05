@@ -58,7 +58,7 @@ namespace Media.Infrastructure.Adapters
             await this.RunWithErrorHandler(action);
         }
 
-        public async Task<IEnumerable<Media>> ListAsync(PaginationParams parameters, CancellationToken token) =>
+        public async Task<IReadOnlyList<Media>> ListAsync(PaginationParams parameters, CancellationToken token) =>
             await this.repo.ListAsync(parameters, token);
 
         public async Task SetViewCountAsync(string id, int count, CancellationToken token)

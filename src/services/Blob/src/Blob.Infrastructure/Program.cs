@@ -56,3 +56,5 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.MapBlobEndpoints();
 app.Run();
+
+public partial class Program { }

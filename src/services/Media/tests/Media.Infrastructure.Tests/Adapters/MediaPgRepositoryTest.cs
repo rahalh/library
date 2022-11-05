@@ -32,8 +32,7 @@ namespace Media.Infrastructure.Tests.Adapters
             var res = await this.repo.ListAsync(new PaginationParams(null, requestedNumber), CancellationToken.None);
 
             res.ShouldNotBeNull();
-            res.ShouldBeOfType<IEnumerable<Media>>();
-
+            res.ShouldBeOfType<List<Media>>();
             var media = res.ToList();
             media.Count.ShouldBe(actualNumber);
             media[0].ExternalId.ShouldBe("WfSPP636sByUECgl");

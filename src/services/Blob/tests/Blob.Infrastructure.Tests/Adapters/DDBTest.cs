@@ -6,21 +6,21 @@ namespace Blob.Infrastructure.Tests.Adapters
     using Domain;
     using Infrastructure.Adapters;
     using Shouldly;
-    using TestContainerSetup;
+    using TestContainers;
     using Xunit;
 
     [Collection(nameof(LocalstackTestContainer))]
     public class DDBTest
     {
-        private readonly string localstackUrl;
+        private readonly DDBSettings ddbSettings;
 
-        public DDBTest(LocalstackTestContainer container) => this.localstackUrl = container.LocalstackUri;
+        public DDBTest(LocalstackTestContainer container) => this.ddbSettings = container.DDBSettings;
 
         [Fact]
         public async Task SaveBlob()
         {
             // Arrange
-            var repo = new DDBRepository(new DDBSettings("blob", this.localstackUrl));
+            var repo = new DDBRepository(this.ddbSettings);
             var blob = new Blob("id", "Application", "pdf", 1024, "domain", "prefix");
 
             // Act
@@ -42,7 +42,7 @@ namespace Blob.Infrastructure.Tests.Adapters
         public async Task GetById_WhenInvalidId_ReturnsNull()
         {
             // Arrange
-            var repo = new DDBRepository(new DDBSettings("blob", this.localstackUrl));
+            var repo = new DDBRepository(this.ddbSettings);
 
             // Act
             var res = await repo.GetByIdAsync("invalidId", CancellationToken.None);
@@ -55,7 +55,7 @@ namespace Blob.Infrastructure.Tests.Adapters
         public async Task GetById_WhenValidId_ReturnsBlob()
         {
             // Arrange
-            var repo = new DDBRepository(new DDBSettings("blob", this.localstackUrl));
+            var repo = new DDBRepository(this.ddbSettings);
             var blob1 = new Blob("id1", "Application", "pdf", 1024, "domain", "prefix");
             var blob2 = new Blob("id2", "Application", "pdf", 1024, "domain", "prefix");
             await repo.SaveAsync(blob1, CancellationToken.None);
@@ -79,7 +79,7 @@ namespace Blob.Infrastructure.Tests.Adapters
         public async Task RemoveBlob_WhenValidId_PerformOp()
         {
             // Arrange
-            var repo = new DDBRepository(new DDBSettings("blob", this.localstackUrl));
+            var repo = new DDBRepository(this.ddbSettings);
             var blob = new Blob("id", "Application", "pdf", 1024, "domain", "prefix");
             await repo.SaveAsync(blob, CancellationToken.None);
 

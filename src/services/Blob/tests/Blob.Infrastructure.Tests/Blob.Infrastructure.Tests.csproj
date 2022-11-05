@@ -8,9 +8,10 @@
 
   <ItemGroup>
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.100.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.10" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageReference Include="Shouldly" Version="4.1.0" />
-    <PackageReference Include="Testcontainers" Version="2.1.0" />
+    <PackageReference Include="Testcontainers" Version="2.2.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,7 +24,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Adapters\scripts\init.sh">
+    <None Update="API\TestContainers\scripts\init-aws.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="Adapters\TestContainers\scripts\init-aws.sh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
