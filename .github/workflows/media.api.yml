@@ -6,7 +6,7 @@ on:
     branches: [main, dev]
     paths:
       - src/services/Media/**
-      - .github/workflows/media-api.yml
+      - .github/workflows/media.api.yml
 
 env:
   SERVICE: media-api

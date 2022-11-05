@@ -6,7 +6,7 @@ on:
     branches: [main, dev]
     paths:
       - src/services/Blob/**
-      - .github/workflows/blob-api.yml
+      - .github/workflows/blob.api.yml
 
 env:
   SERVICE: blob-api
