@@ -32,7 +32,7 @@ runs:
 
     - name: Compose build ${{ inputs.service }}
       shell: bash
-      run: sudo -E docker-compose build ${{ inputs.service }}
+      run: sudo -E docker-compose -f docker-compose-build.yaml build ${{ inputs.service }}
       working-directory: .
 
     - name: Docker Tag ${{ inputs.service }}
