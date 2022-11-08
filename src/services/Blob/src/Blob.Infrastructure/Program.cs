@@ -10,6 +10,7 @@ using Confluent.Kafka;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,8 +19,18 @@ Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .CreateLogger();
 
-builder.Services.AddSingleton(_ => new DDBSettings(builder.Configuration["AWS:DDB:TableName"], builder.Configuration["AWS:DDB:ServiceURL"]));
-builder.Services.AddSingleton(_ => new S3Settings(builder.Configuration["AWS:S3:BucketName"], builder.Configuration["AWS:S3:StorageDomain"]) {Prefix = builder.Configuration["AWS:S3:Prefix"]});
+builder.Services.AddOptions<S3Settings>()
+    .BindConfiguration("AWS:S3")
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+builder.Services.AddOptions<DDBSettings>()
+    .BindConfiguration("AWS:DDB")
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+builder.Services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<S3Settings>>().Value);
+builder.Services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<DDBSettings>>().Value);
 
 builder.Services.AddSingleton<IProducer<Null, string>>(_ =>
 {
@@ -39,12 +50,16 @@ builder.Services.AddSingleton<IBlobRepository, DDBRepository>();
 builder.Services.AddSingleton<DeleteBlobInteractor>();
 builder.Services.AddSingleton<StoreBlobInteractor>(sp =>
 {
-    var logger = sp.GetRequiredService<Serilog.ILogger>();
-    var eventProducer = sp.GetRequiredService<IEventProducer>();
-    var fileStore = sp.GetRequiredService<IFileStore>();
-    var repo = sp.GetRequiredService<IBlobRepository>();
-    return new StoreBlobInteractor(logger, repo, fileStore, eventProducer, builder.Configuration["AWS:S3:StorageDomain"]);
+    var settings = sp.GetRequiredService<S3Settings>();
+    return new StoreBlobInteractor(
+        logger: sp.GetRequiredService<Serilog.ILogger>(),
+        repo: sp.GetRequiredService<IBlobRepository>(),
+        fileStore: sp.GetRequiredService<IFileStore>(),
+        eventProducer: sp.GetRequiredService<IEventProducer>(),
+        settings.StorageDomain,
+        settings.Prefix ?? string.Empty);
 });
+
 builder.Services.AddSingleton<GetBlobByIdInteractor>();
 builder.Services.AddSingleton<DeleteBlobSagaInteractor>();
 

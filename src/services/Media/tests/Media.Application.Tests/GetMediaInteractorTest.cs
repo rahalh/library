@@ -56,7 +56,7 @@ namespace Media.Application.Tests
             res.TotalViews.ShouldBe(totalViews + 1);
             res.CreateTime.ShouldBe(media.CreateTime);
             res.UpdateTime.ShouldBe(media.UpdateTime);
-            res.ContentURL.ShouldBe(media.ContentURL);
+            res.ContentURL.ShouldBe(media.ContentURL?.ToString());
         }
     }
 }

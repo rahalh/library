@@ -3,6 +3,8 @@ namespace Blob.Application.Interactors
     using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
+    using Common;
+    using Common.Models;
     using Domain;
     using Domain.Services;
     using Exceptions;

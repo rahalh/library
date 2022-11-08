@@ -37,8 +37,8 @@ namespace Media.Infrastructure.Tests
         protected override void ConfigureWebHost(IWebHostBuilder builder) =>
             builder.ConfigureServices(services =>
             {
-                services.AddSingleton(_ => new RedisSettings(this.RedisConnectionString));
-                services.AddSingleton(_ => new PostgresqlSettings(this.PgConnectionString));
+                services.AddSingleton(_ => new RedisSettings {ConnectionString = this.RedisConnectionString});
+                services.AddSingleton(_ => new PostgresqlSettings {ConnectionString = this.PgConnectionString});
             });
 
         public async Task InitializeAsync()

@@ -7,6 +7,6 @@ namespace Blob.Domain.Services
     {
         public Task<Blob> SaveAsync(Blob blob, CancellationToken token);
         public Task RemoveAsync(string id, CancellationToken token);
-        public Task<Blob> GetByIdAsync(string id, CancellationToken token);
+        public Task<Blob?> GetByIdAsync(string id, CancellationToken token);
     }
 }

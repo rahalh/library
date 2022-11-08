@@ -4,7 +4,7 @@ namespace Media.Application.Interactors
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Domain;
+    using Common.Models;
     using Domain.Services;
 
     public class ListMediaInteractor
@@ -15,34 +15,50 @@ namespace Media.Application.Interactors
 
         public async Task<ListMediaResponse> HandleAsync(ListMediaRequest request, CancellationToken token)
         {
-            var paginationParams = new PaginationParams(request.Token, request.PageSize);
-            paginationParams.Size++;
-
-            var medias = await this.repo.ListAsync(paginationParams, token);
+            var medias = await this.repo.ListAsync(request.PageSize + 1, request.PageToken, token);
 
             string? nextToken = null;
-            if (medias.Count > paginationParams.Size - 1)
+            if (medias.Count > request.PageSize)
             {
-                nextToken = medias[medias.Count - 1].ExternalId;
+                nextToken = medias[^1].ExternalId;
                 medias = medias.SkipLast(1).ToList();
             }
 
-            return new ListMediaResponse(medias.Select(x => new MediaDTO(
-                x.Title,
-                x.Description,
-                x.LanguageCode,
-                x.MediaType,
-                x.CreateTime,
-                x.UpdateTime,
-                x.ExternalId,
-                x.ContentURL,
-                x.TotalViews,
-                x.PublishDate
-            )), nextToken);
+            return new ListMediaResponse(
+                medias.Select(x => new MediaDTO(
+                        x.Title,
+                        x.Description,
+                        x.LanguageCode,
+                        x.MediaType,
+                        x.CreateTime,
+                        x.UpdateTime,
+                        x.ExternalId,
+                        x.ContentURL?.ToString(),
+                        x.TotalViews,
+                        x.PublishDate
+                    )
+                ), nextToken);
         }
     }
 
-    public record ListMediaRequest(int PageSize, string? Token);
+    public record ListMediaRequest
+    {
+        public string? PageToken { get; }
+        public int PageSize { get; }
 
-    public record ListMediaResponse(IEnumerable<MediaDTO> Items, string NextToken);
+        public ListMediaRequest(int? size, string? token)
+        {
+            this.PageToken = token;
+            if (size is not null && size > 0)
+            {
+                this.PageSize = this.PageSize > 100 ? 100 : size.Value;
+            }
+            else
+            {
+                this.PageSize = 10;
+            }
+        }
+    };
+
+    public record ListMediaResponse(IEnumerable<MediaDTO> Items, string? NextToken);
 }

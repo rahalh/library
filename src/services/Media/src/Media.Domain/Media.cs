@@ -4,13 +4,6 @@ namespace Media.Domain
     using Microsoft.VisualBasic;
     using Nanoid;
 
-    public enum MediaType
-    {
-        Book,
-        Video,
-        Podcast
-    }
-
     public class Media
     {
         public int Id { get; set; }
@@ -24,9 +17,9 @@ namespace Media.Domain
         public int TotalViews { get; set; }
         public DateTime CreateTime { get; set; }
         public DateTime UpdateTime { get; set; }
-        public string ContentURL { get; set; }
+        public string? ContentURL { get; set; }
 
-        public Media(string title, string description, string languageCode, DateTime publishDate, string mediaType)
+        public Media(string title, string description, string? languageCode, DateTime publishDate, string mediaType)
         {
             this.Title = title;
             this.Description = description;

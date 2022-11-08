@@ -56,7 +56,7 @@ namespace Blob.Infrastructure.Adapters
             await this.ddbClient.DeleteItemAsync(req, token);
         }
 
-        public async Task<Blob> GetByIdAsync(string id, CancellationToken token)
+        public async Task<Blob?> GetByIdAsync(string id, CancellationToken token)
         {
             var req = new GetItemRequest()
             {

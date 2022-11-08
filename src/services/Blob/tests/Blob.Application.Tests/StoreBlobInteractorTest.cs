@@ -28,8 +28,8 @@ namespace Blob.Application.Tests
             this.repo = new Mock<IBlobRepository>();
             this.fileStore = new Mock<IFileStore>();
             this.eventProducer = new Mock<IEventProducer>();
-            this.s3Settings = new S3Settings("bucket-name", "storage-domain");
-            this.interactor = new StoreBlobInteractor(Logger.None, this.repo.Object, this.fileStore.Object, this.eventProducer.Object, this.s3Settings.StorageDomain);
+            this.s3Settings = new S3Settings() { BucketName = "bucket-name", StorageDomain = "storage-domain"};
+            this.interactor = new StoreBlobInteractor(Logger.None, this.repo.Object, this.fileStore.Object, this.eventProducer.Object, this.s3Settings.StorageDomain, this.s3Settings.Prefix ?? string.Empty);
         }
 
         [Theory]

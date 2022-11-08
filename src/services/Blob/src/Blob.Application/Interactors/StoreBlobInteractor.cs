@@ -6,6 +6,7 @@ namespace Blob.Application.Interactors
     using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
+    using Common.Models;
     using Domain;
     using Domain.Services;
     using FluentValidation;
@@ -21,6 +22,7 @@ namespace Blob.Application.Interactors
         private readonly IFileStore fileStore;
         private readonly IEventProducer eventProducer;
         private readonly string storageDomain;
+        private readonly string prefix;
         private readonly ILogger logger;
 
         public StoreBlobInteractor(
@@ -28,10 +30,12 @@ namespace Blob.Application.Interactors
             IBlobRepository repo,
             IFileStore fileStore,
             IEventProducer eventProducer,
-            string storageDomain)
+            string storageDomain,
+            string prefix)
         {
             this.repo = repo;
             this.storageDomain = storageDomain;
+            this.prefix = prefix;
             this.fileStore = fileStore;
             this.logger = logger
                 .ForContext<StoreBlobInteractor>()
@@ -47,7 +51,7 @@ namespace Blob.Application.Interactors
                 throw new ValidationException(JsonSerializer.Serialize(validationResult.ToDictionary()));
             }
 
-            var blob = new Blob(request.Id, request.BlobType, request.Extension, request.Size, this.storageDomain, "");
+            var blob = new Blob(request.Id, request.BlobType, request.Extension, request.Size, this.storageDomain, this.prefix);
             await this.fileStore.StoreAsync(blob.Name, request.Content, token);
             try
             {
@@ -55,7 +59,7 @@ namespace Blob.Application.Interactors
             }
             catch (Exception ex)
             {
-                // Rollback persistence
+                // Rollback
                 try { await this.fileStore.RemoveAsync(blob.Name, token); }
                 catch (Exception nestedEx) { this.logger.Error(nestedEx, nestedEx.Message); }
 

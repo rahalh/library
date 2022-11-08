@@ -21,40 +21,26 @@ namespace Media.Infrastructure.Tests.Adapters
         public MediaPgRepositoryTest(PgTestContainer fixture)
         {
             this.connectionString = fixture.ConnectionString;
-            this.repo = new MediaPgRepository(new PostgresqlSettings(this.connectionString));
+            this.repo = new MediaPgRepository(new PostgresqlSettings {ConnectionString = this.connectionString});
         }
 
         [Theory]
-        [InlineData(10, 4)]
-        [InlineData(2, 2)]
-        public async Task GetAllMedia_WhenFetch10Media_ReturnsListOf4Media(int requestedNumber, int actualNumber)
+        [InlineData(10, null, new[] {"WfSPP636sByUECgl", "jZeM577fgcSrulKc", "UPj6SSMvaKIuXwnY", "Bg7-4rPtC-Kl2fGh"})]
+        [InlineData(2, null, new[] {"WfSPP636sByUECgl", "jZeM577fgcSrulKc"})]
+        [InlineData(2, "UPj6SSMvaKIuXwnY", new[] {"UPj6SSMvaKIuXwnY", "Bg7-4rPtC-Kl2fGh"})]
+        [InlineData(3, "Bg7-4rPtC-Kl2fGh", new[] {"Bg7-4rPtC-Kl2fGh"})]
+        public async Task FetchMedia_ReturnsListOfMedia(int pageSize, string? pageToken, string[] expectedIds)
         {
-            var res = await this.repo.ListAsync(new PaginationParams(null, requestedNumber), CancellationToken.None);
+            var res = await this.repo.ListAsync(pageSize, pageToken, CancellationToken.None);
 
             res.ShouldNotBeNull();
             res.ShouldBeOfType<List<Media>>();
-            var media = res.ToList();
-            media.Count.ShouldBe(actualNumber);
-            media[0].ExternalId.ShouldBe("WfSPP636sByUECgl");
-            media.Select(x => x.UpdateTime).ShouldBeInOrder(SortDirection.Descending);
+            res.Select(x => x.ExternalId).ShouldBe(expectedIds);
+            res.Select(x => x.UpdateTime).ShouldBeInOrder(SortDirection.Descending);
         }
 
         [Fact]
-        public async Task GetAllMedia_WhenFetchTokenMedia_ReturnsListOfMedia()
-        {
-            var id = "UPj6SSMvaKIuXwnY";
-            var res = await this.repo.ListAsync(new PaginationParams(id, 3), CancellationToken.None);
-            var media = res.ToList();
-
-            res.ShouldNotBeNull();
-            media.ShouldBeOfType<List<Media>>();
-            media.Count.ShouldBe(2);
-            media[0].ExternalId.ShouldBe(id);
-            media.Select(x => x.UpdateTime).ShouldBeInOrder(SortDirection.Descending);
-        }
-
-        [Fact]
-        public async Task GetById_WhenFetchValidId_ReturnsMedia()
+        public async Task GetById_WhenIdExists_ReturnsMedia()
         {
             var id = "UPj6SSMvaKIuXwnY";
             var media = await this.repo.FetchByIdAsync(id, CancellationToken.None);
@@ -65,14 +51,14 @@ namespace Media.Infrastructure.Tests.Adapters
         }
 
         [Fact]
-        public async Task GetById_WhenFetchInValid_ReturnsNull()
+        public async Task GetById_WhenIdNotFound_ReturnsNull()
         {
             var media = await this.repo.FetchByIdAsync("invalid_id", CancellationToken.None);
             media.ShouldBeNull();
         }
 
         [Fact]
-        public async Task Remove_WhenValidId_ItemDeleted()
+        public async Task Remove_WhenIdExists_ItemDeleted()
         {
             // Arrange
             var id = "UPj6SSMvaKIuXwnY";
@@ -106,7 +92,7 @@ namespace Media.Infrastructure.Tests.Adapters
         {
             // Arrange
             var id = "UPj6SSMvaKIuXwnY";
-            var url = "url";
+            var url = "https://domain.com";
 
             // Act
             await this.repo.SetContentURLAsync(id, url, CancellationToken.None);

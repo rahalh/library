@@ -37,7 +37,7 @@ namespace Media.Infrastructure.Adapters
 
         public async Task SaveAsync(Media media, CancellationToken token) => await this.repo.SaveAsync(media, token);
 
-        public async Task<Media> FetchByIdAsync(string id, CancellationToken token)
+        public async Task<Media?> FetchByIdAsync(string id, CancellationToken token)
         {
             var cachedData = await this.GetValueAsync<Media>(this.Redis, GenerateKey(id));
             if (cachedData is not null)
@@ -58,8 +58,8 @@ namespace Media.Infrastructure.Adapters
             await this.RunWithErrorHandler(action);
         }
 
-        public async Task<IReadOnlyList<Media>> ListAsync(PaginationParams parameters, CancellationToken token) =>
-            await this.repo.ListAsync(parameters, token);
+        public async Task<IReadOnlyList<Media>> ListAsync(int pageSize, string? pageToken, CancellationToken token) =>
+            await this.repo.ListAsync(pageSize, pageToken, token);
 
         public async Task SetViewCountAsync(string id, int count, CancellationToken token)
         {
@@ -91,7 +91,7 @@ namespace Media.Infrastructure.Adapters
 
         public async Task<bool> CheckExistsAsync(string id, CancellationToken token) => await this.repo.CheckExistsAsync(id, token);
 
-        private async Task<TObject> GetValueAsync<TObject>(IDatabase cache, string key)
+        private async Task<TObject?> GetValueAsync<TObject>(IDatabase cache, string key)
             where TObject : class
         {
             try

@@ -29,7 +29,7 @@ namespace Media.Application.Tests
         [InlineData(11, 0, 10)]
         [InlineData(99, 101, 99)]
         [InlineData(0, 10, 0)]
-        public async Task When_ReturnsMediaList(int numOfItemsReturnedByRepo, int requestedSize, int actualCount)
+        public async Task ReturnsMediaList(int numOfItemsReturnedByRepo, int requestedSize, int actualCount)
         {
             // Arrange
             var fixture = new Fixture();
@@ -39,7 +39,7 @@ namespace Media.Application.Tests
                 medias.Add(fixture.Create<Media>());
             }
 
-            this.repo.Setup(x => x.ListAsync(It.IsAny<PaginationParams>(), CancellationToken.None)).ReturnsAsync(medias);
+            this.repo.Setup(x => x.ListAsync(It.IsAny<int>(), It.IsAny<string>(), CancellationToken.None)).ReturnsAsync(medias);
 
             // Act
             var res = await this.interactor.HandleAsync(new ListMediaRequest(requestedSize, null), CancellationToken.None);

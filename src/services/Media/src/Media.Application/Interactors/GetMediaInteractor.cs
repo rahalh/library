@@ -2,6 +2,7 @@ namespace Media.Application.Interactors
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Common.Models;
     using Domain.Services;
     using Exceptions;
 
@@ -28,7 +29,7 @@ namespace Media.Application.Interactors
                 media.CreateTime,
                 media.UpdateTime,
                 media.ExternalId,
-                media.ContentURL,
+                media.ContentURL?.ToString(),
                 media.TotalViews,
                 media.PublishDate
             );

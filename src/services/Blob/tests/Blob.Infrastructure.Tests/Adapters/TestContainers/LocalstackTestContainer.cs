@@ -24,8 +24,18 @@ namespace Blob.Infrastructure.Tests.Adapters.TestContainers
         {
             this.localstackport = Random.Shared.Next(4000, 5000);
 
-            this.S3Settings = new S3Settings(this.bucketName, this.LocalstackUri) {ServiceUrl = this.LocalstackUri, ForcePathStyle = true};
-            this.DDBSettings = new DDBSettings(this.tableName, this.LocalstackUri);
+            this.S3Settings = new S3Settings()
+            {
+                BucketName = this.bucketName,
+                StorageDomain = this.LocalstackUri,
+                ServiceUrl = this.LocalstackUri,
+                ForcePathStyle = true
+            };
+            this.DDBSettings = new DDBSettings()
+            {
+                TableName = this.tableName,
+                ServiceURL = this.LocalstackUri
+            };
 
             this.container = new TestcontainersBuilder<TestcontainersContainer>()
                 .WithImage("localstack/localstack")

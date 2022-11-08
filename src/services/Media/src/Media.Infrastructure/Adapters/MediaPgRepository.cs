@@ -60,7 +60,7 @@ namespace Media.Infrastructure.Adapters
             }
         }
 
-        public async Task<Media> FetchByIdAsync(string id, CancellationToken token)
+        public async Task<Media?> FetchByIdAsync(string id, CancellationToken token)
         {
             await using var connection = new NpgsqlConnection(this.connectionString);
             var query = @"
@@ -88,7 +88,7 @@ namespace Media.Infrastructure.Adapters
             await connection.ExecuteAsync(new CommandDefinition(command, new {id}, cancellationToken: token));
         }
 
-        public async Task<IReadOnlyList<Media>> ListAsync(PaginationParams parameters, CancellationToken token)
+        public async Task<IReadOnlyList<Media>> ListAsync(int pageSize, string? pageToken, CancellationToken token)
         {
             await using var connection = new NpgsqlConnection(this.connectionString);
             var query = @"
@@ -109,7 +109,7 @@ namespace Media.Infrastructure.Adapters
                 fetch first @size rows only";
 
             var res = await connection.QueryAsync<Media>(new CommandDefinition(query,
-                new {parameters.Token, parameters.Size}, cancellationToken: token));
+                new {size = pageSize, token = pageToken}, cancellationToken: token));
             return res.AsList();
         }
 

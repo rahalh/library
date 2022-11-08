@@ -10,7 +10,7 @@ using Media.Infrastructure.Transport.HTTP;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,12 +19,25 @@ Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .CreateLogger();
 
-builder.Services.AddSingleton(_ => new RedisSettings(builder.Configuration.GetConnectionString("Redis")));
-builder.Services.AddSingleton(_ => new PostgresqlSettings(builder.Configuration.GetConnectionString("PostgreSQL")));
+builder.Services.AddOptions<RedisSettings>()
+    .BindConfiguration("ConnectionStrings:Redis")
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+builder.Services.AddOptions<PostgresqlSettings>()
+    .BindConfiguration("ConnectionStrings:PostgreSQL")
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+builder.Services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<PostgresqlSettings>>().Value);
+builder.Services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<RedisSettings>>().Value);
 
 builder.Services.AddSingleton<IProducer<Null, string>>(_ =>
 {
-    var producerConfig = new ProducerConfig() {BootstrapServers = builder.Configuration.GetConnectionString("Kafka")};
+    var producerConfig = new ProducerConfig()
+    {
+        BootstrapServers = builder.Configuration.GetConnectionString("Kafka")
+    };
     return new ProducerBuilder<Null, string>(producerConfig).Build();
 });
 
@@ -45,11 +58,6 @@ builder.Services.AddHostedService<BackgroundKafkaConsumer>();
 var app = builder.Build();
 // TODO add swagger
 // TODO document endpoints
-
-if (!builder.Environment.IsProduction())
-{
-    app.UseDeveloperExceptionPage();
-}
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.MapMediaEndpoints();

@@ -26,8 +26,8 @@ namespace Media.Infrastructure.Tests.Adapters
             var config = ConfigurationOptions.Parse(fixture.RedisConnectionString);
             config.AllowAdmin = true;
 
-            var repo = new MediaPgRepository(new PostgresqlSettings(fixture.PgConnectionString));
-            this.cache = new MediaRedisRepository(Logger.None, new RedisSettings(config.ToString()), repo);
+            var repo = new MediaPgRepository(new PostgresqlSettings {ConnectionString = this.pgConnectionString});
+            this.cache = new MediaRedisRepository(Logger.None, new RedisSettings {ConnectionString = config.ToString()}, repo);
         }
 
         [Fact]
@@ -119,7 +119,7 @@ namespace Media.Infrastructure.Tests.Adapters
             var media = await this.cache.FetchByIdAsync(id, CancellationToken.None);
             media.ShouldNotBeNull();
             media.ContentURL.ShouldNotBeNull();
-            media.ContentURL.ShouldBe(url);
+            media.ContentURL.ToString().ShouldBe(url);
         }
 
         [Fact]
@@ -137,7 +137,7 @@ namespace Media.Infrastructure.Tests.Adapters
             var media = await this.cache.FetchByIdAsync(id, CancellationToken.None);
             media.ShouldNotBeNull();
             media.ContentURL.ShouldNotBeNull();
-            media.ContentURL.ShouldBe(url);
+            media.ContentURL.ToString().ShouldBe(url);
         }
 
         [Fact]

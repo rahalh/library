@@ -1,25 +1,15 @@
 namespace Blob.Infrastructure.Configuration
 {
-    using System;
+    using System.ComponentModel.DataAnnotations;
 
     public class S3Settings
     {
-        public string Prefix { get; set; }
-        public string StorageDomain { get; }
-        public string BucketName { get; }
-        public string ServiceUrl { get; set; }
+        [Required, MinLength(1), RegularExpression(@"^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$", ErrorMessage = "Invalid domain name")]
+        public string StorageDomain { get; set; }
+        [Required, MinLength(1)]
+        public string BucketName { get; set; }
+        public string? Prefix { get; set; }
+        public string? ServiceUrl { get; set; }
         public bool ForcePathStyle { get; set; }
-
-        public S3Settings(string bucketName, string storageDomain)
-        {
-            // todo storage domain can't start with a dot
-            this.StorageDomain = string.IsNullOrEmpty(storageDomain)
-                ? throw new ArgumentNullException($"{nameof(this.BucketName)} is missing")
-                : storageDomain;
-
-            this.BucketName = string.IsNullOrEmpty(bucketName)
-                ? throw new ArgumentNullException($"{nameof(this.BucketName)} is missing")
-                : bucketName;
-        }
     }
 }

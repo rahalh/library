@@ -1,18 +1,12 @@
 namespace Blob.Infrastructure.Configuration
 {
-    using System;
+    using System.ComponentModel.DataAnnotations;
 
     public class DDBSettings
     {
-        public string TableName { get; }
-        public string ServiceURL { get; }
-
-        public DDBSettings(string tableName, string serviceURL)
-        {
-            this.TableName = string.IsNullOrEmpty(tableName)
-                ? throw new ArgumentNullException($"{nameof(this.TableName)} is missing")
-                : tableName;
-            this.ServiceURL = serviceURL;
-        }
+        [Required, MinLength(1)]
+        public string TableName { get; set; }
+        public string PartitionKey { get; set; }
+        public string? ServiceURL { get; set; }
     }
 }

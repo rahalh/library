@@ -10,6 +10,8 @@
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.100" />
     <PackageReference Include="AWSSDK.S3" Version="3.7.101" />
     <PackageReference Include="Confluent.Kafka" Version="1.9.4-RC1" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
+    <PackageReference Include="RabbitMQ.Client.Core.DependencyInjection" Version="5.0.0" />
 
     <PackageReference Include="Serilog.AspNetCore" Version="4.1.1-dev-00229" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1-dev-00876" />

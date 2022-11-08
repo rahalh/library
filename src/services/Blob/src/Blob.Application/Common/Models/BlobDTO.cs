@@ -1,4 +1,4 @@
-namespace Blob.Domain
+namespace Blob.Application.Common.Models
 {
     using System;
 

@@ -3,13 +3,6 @@ namespace Blob.Domain
     using System;
     using Microsoft.VisualBasic;
 
-    public enum BlobTypes
-    {
-        Application,
-        Audio,
-        Video
-    }
-
     public class Blob
     {
         public string Id { get; set; }
@@ -31,6 +24,7 @@ namespace Blob.Domain
             this.CreateTime = DateTime.UtcNow;
             this.UpdateTime = DateTime.UtcNow;
 
+            // todo catch UriFormalException ?
             this.URL = new UriBuilder() {
                 Host = storageDomain,
                 Scheme = "https",

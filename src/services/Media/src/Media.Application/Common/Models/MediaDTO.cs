@@ -1,4 +1,4 @@
-namespace Media.Application
+namespace Media.Application.Common.Models
 {
     using System;
 
@@ -10,7 +10,7 @@ namespace Media.Application
         DateTime CreateTime,
         DateTime UpdateTime,
         string ExternalId,
-        string ContentURL,
+        string? ContentURL,
         int TotalViews,
         DateTime PublishDate
     );

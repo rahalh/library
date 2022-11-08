@@ -3,6 +3,7 @@ namespace Media.Application.Interactors
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using Common.Models;
     using Domain;
     using Domain.Services;
     using FluentValidation;
@@ -27,6 +28,7 @@ namespace Media.Application.Interactors
             var media = new Media(request.Title, request.Description, request.LanguageCode, request.PublishDate!.Value,
                 request.MediaType);
             await this.repo.SaveAsync(media, token);
+
             return new MediaDTO(
                 media.Title,
                 media.Description,
@@ -35,7 +37,7 @@ namespace Media.Application.Interactors
                 media.CreateTime,
                 media.UpdateTime,
                 media.ExternalId,
-                media.ContentURL,
+                media.ContentURL?.ToString(),
                 media.TotalViews,
                 media.PublishDate
             );
