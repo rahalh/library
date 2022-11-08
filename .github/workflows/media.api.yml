@@ -46,5 +46,5 @@ jobs:
           registry_host: ${{ secrets.REGISTRY_HOST }}
           registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
           image_name: ${{ env.IMAGE }}
-          registry_username: ${{ secrets.USERNAME }}
-          registry_password: ${{ secrets.PASSWORD }}
+          registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
