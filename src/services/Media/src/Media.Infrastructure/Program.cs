@@ -20,12 +20,13 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 builder.Services.AddOptions<RedisSettings>()
-    .BindConfiguration("ConnectionStrings:Redis")
+    .BindConfiguration("Redis")
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+
 builder.Services.AddOptions<PostgresqlSettings>()
-    .BindConfiguration("ConnectionStrings:PostgreSQL")
+    .BindConfiguration("PostgreSQL")
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
@@ -34,10 +35,7 @@ builder.Services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<R
 
 builder.Services.AddSingleton<IProducer<Null, string>>(_ =>
 {
-    var producerConfig = new ProducerConfig()
-    {
-        BootstrapServers = builder.Configuration.GetConnectionString("Kafka")
-    };
+    var producerConfig = new ProducerConfig() {BootstrapServers = builder.Configuration.GetConnectionString("Kafka")};
     return new ProducerBuilder<Null, string>(producerConfig).Build();
 });
 
@@ -64,4 +62,6 @@ app.MapMediaEndpoints();
 
 app.Run();
 
-public partial class Program { }
+public partial class Program
+{
+}
