@@ -33,12 +33,10 @@ runs:
     - name: Compose build ${{ inputs.service }}
       shell: bash
       run: sudo -E docker-compose -f docker-compose-build.yaml build ${{ inputs.service }}
-      working-directory: .
 
     - name: Docker Tag ${{ inputs.service }}
       shell: bash
-      run: sudo -E docker tag ${{ inputs.service }} -t ${{ inputs.registry_endpoint }}/${{ inputs.image_name }}:latest
-      working-directory: ./src/services
+      run: sudo -E docker tag ${{ inputs.service }} ${{ inputs.registry_endpoint }}/${{ inputs.image_name }}:latest
 
     - name: Compose push ${{ inputs.service }}
       shell: bash
