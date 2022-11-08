@@ -9,7 +9,7 @@ on:
       - .github/workflows/blob.api.yml
 
 env:
-  SERVICE: blob-api
+  SERVICE: blob
   IMAGE: blob.api
 
 jobs:

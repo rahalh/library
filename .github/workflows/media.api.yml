@@ -9,7 +9,7 @@ on:
       - .github/workflows/media.api.yml
 
 env:
-  SERVICE: media-api
+  SERVICE: media
   IMAGE: media.api
 
 jobs:
