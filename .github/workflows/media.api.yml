@@ -10,7 +10,7 @@ on:
 
 env:
   SERVICE: media
-  DOCKER_IMAGE: rahalh/media
+  DOCKER_IMAGE: docker.io/rahalh/media
 
 jobs:
   build:

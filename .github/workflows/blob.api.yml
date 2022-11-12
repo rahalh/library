@@ -10,7 +10,7 @@ on:
 
 env:
   SERVICE: blob
-  DOCKER_IMAGE: rahalh/blob
+  DOCKER_IMAGE: docker.io/rahalh/blob
 
 jobs:
   build:
