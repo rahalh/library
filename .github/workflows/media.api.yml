@@ -57,12 +57,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Compose build ${{ env.service }}
+      - name: Compose build ${{ env.SERVICE }}
         shell: bash
-        run: sudo -E docker build . -t ${{ env.service }}
+        run: sudo -E docker build . -t ${{ env.SERVICE }}
         working-directory: ${{env.working-directory}}
 
-      - name: Docker Tag ${{ env.service }}
+      - name: Docker Tag ${{ env.SERVICE }}
         shell: bash
         run: |
           sudo -E docker tag ${{ env.SERVICE }} ${{ secrets.REGISTRY_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ steps.get_env.outputs.GITHUB_SHA }}
