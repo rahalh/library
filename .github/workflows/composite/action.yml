@@ -5,9 +5,6 @@ inputs:
   service:
     description: "Service to build"
     required: true
-  context:
-    description: "Docker context"
-    required: true
   registry_host:
     description: "Image registry host e.g. myacr.azureacr.io"
     required: true
@@ -45,6 +42,6 @@ runs:
     - name: Build and push ${{ inputs.service }}
       uses: docker/build-push-action@v3
       with:
-        context: ${{ inputs.context }}
+        context: .
         push: true
         tags: ${{ inputs.image_tags }}

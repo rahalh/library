@@ -11,7 +11,6 @@ on:
 env:
   SERVICE: blob
   DOCKER_IMAGE: rahalh/blob
-  DOCKER_CONTEXT: ./src/services/Blob
 
 jobs:
   build:
@@ -60,7 +59,6 @@ jobs:
         uses: ./.github/workflows/composite
         with:
           service: ${{ env.SERVICE }}
-          context: ${{ env.DOCKER_CONTEXT }}
           registry_host: ${{ secrets.REGISTRY_HOST }}
           registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
           image_name: ${{ env.DOCKER_IMAGE }}
