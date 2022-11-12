@@ -7,11 +7,9 @@ using Media.Infrastructure.Configuration;
 using Media.Infrastructure.Middleware;
 using Media.Infrastructure.Transport.Events;
 using Media.Infrastructure.Transport.HTTP;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Serilog;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +37,18 @@ builder.Services.AddSingleton<IProducer<Null, string>>(_ =>
     return new ProducerBuilder<Null, string>(producerConfig).Build();
 });
 
+//  By connecting here we are making sure that our service
+//  cannot start until redis is ready. This might slow down startup,
+//  but given that there is a delay on resolving the ip address
+//  and then creating the connection it seems reasonable to move
+//  that cost to startup instead of having the first request pay the
+//  penalty.
+builder.Services.AddSingleton<IConnectionMultiplexer>(resolver =>
+{
+    var settings = resolver.GetRequiredService<IOptions<RedisSettings>>().Value;
+    return ConnectionMultiplexer.Connect(settings.ConnectionString);
+});
+
 builder.Services.AddSingleton<ListMediaInteractor>();
 builder.Services.AddSingleton<GetMediaInteractor>();
 builder.Services.AddSingleton<CreateMediaInteractor>();
@@ -54,14 +64,10 @@ builder.Services.AddSingleton(Log.Logger);
 builder.Services.AddHostedService<BackgroundKafkaConsumer>();
 
 var app = builder.Build();
-// TODO add swagger
-// TODO document endpoints
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.MapMediaEndpoints();
 
 app.Run();
 
-public partial class Program
-{
-}
+public partial class Program {}

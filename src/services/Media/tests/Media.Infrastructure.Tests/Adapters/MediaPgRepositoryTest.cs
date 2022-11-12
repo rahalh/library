@@ -77,14 +77,14 @@ namespace Media.Infrastructure.Tests.Adapters
             // Arrange
             var id = "UPj6SSMvaKIuXwnY";
             var res = await this.repo.FetchByIdAsync(id, CancellationToken.None);
-            var count = res.TotalViews;
+            var count = res!.TotalViews;
             // Act
             await this.repo.SetViewCountAsync(id, ++count, CancellationToken.None);
 
             // Assert
             var media = await this.repo.FetchByIdAsync(id, CancellationToken.None);
             media.ShouldNotBeNull();
-            media.TotalViews.ShouldBe(12);
+            media.TotalViews.ShouldBe(count);
         }
 
         [Fact]

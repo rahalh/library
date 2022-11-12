@@ -7,6 +7,7 @@ namespace Media.Infrastructure.Tests
     using System.Net.Http.Json;
     using System.Text;
     using System.Threading.Tasks;
+    using System.Web;
     using Application.Interactors;
     using Domain;
     using Helpers;
@@ -37,19 +38,20 @@ namespace Media.Infrastructure.Tests
         public async Task ListMediaEndpoint_ReturnsListOfItems(int? pageSize, string? token, int itemsCount)
         {
             // Arrange
-            var query = new StringBuilder();
+            var query = HttpUtility.ParseQueryString(string.Empty);
             if (pageSize is not null)
             {
-                query.Append($"pageSize={pageSize}");
+                query["pageSize"] = pageSize.ToString();
             }
 
             if (token is not null)
             {
-                query.Append($"&pageToken={token}");
+                query["pageToken"] = token;
             }
+            var queryString = query.ToString();
 
             // Act
-            var resp = await this.httpClient.GetAsync($"api/media?{query.ToString()}");
+            var resp = await this.httpClient.GetAsync($"api/media?{queryString}");
             var bodyJSON = await resp.Content.ReadAsStringAsync();
 
             // Assert
@@ -93,39 +95,18 @@ namespace Media.Infrastructure.Tests
             resp.StatusCode.ShouldBe(HttpStatusCode.NotFound);
         }
 
-        // todo use Kafkadrop's REST API
-        // [Fact]
-        // public async Task RemoveMediaEndpoint_WhenValidId_DeletesMedia()
-        // {
-        //     // Arrange
-        //     var id = "UPj6SSMvaKIuXwnY";
-        //
-        //     // Act
-        //     var resp1 = await this.httpClient.DeleteAsync($"api/media/{id}");
-        //     var bodyJSON1 = await resp1.Content.ReadAsStringAsync();
-        //
-        //     // var resp2 = await this.httpClient.GetAsync($"api/media/{id}");
-        //     // var bodyJSON2 = await resp2.Content.ReadAsStringAsync();
-        //
-        //     // Assert
-        //     resp1.StatusCode.ShouldBe(HttpStatusCode.NoContent);
-        //     bodyJSON1.ShouldBeEmpty();
-        //     // resp2.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-        //     // bodyJSON2.ShouldBeEmpty();
-        // }
-
         [Theory]
         [InlineData("Title", "Description", "en", "book", "2022-01-13T16:25:35", true)]
-        [InlineData("Title", "Description", "en", "invalid_media_type", "2022-04-11T09:16:35", false)]
-        [InlineData("Title", "Description", "en", "book", null, false)]
-        [InlineData("Title", "Description", "", "book", "2022-04-11T09:16:35", false)]
-        [InlineData("Title", null, "en", "book", "2022-04-11T09:16:35", false)]
-        public async Task CreateMediaEndpoint_WhenParamsAreValid_ReturnsNewMedia(string title, string desc, string languageCode, string mediaType, string? publishDate, bool valid)
+        // [InlineData("Title", "Description", "en", "invalid_media_type", "2022-04-11T09:16:35", false)]
+        // [InlineData("Title", "Description", "en", "book", null, false)]
+        // [InlineData("Title", "Description", "", "book", "2022-04-11T09:16:35", false)]
+        // [InlineData("Title", null, "en", "book", "2022-04-11T09:16:35", false)]
+        public async Task CreateMediaEndpoint_WhenParamsAreValid_ReturnsNewMedia(string title, string description, string languageCode, string mediaType, string? publishDate, bool valid)
         {
             // Act
             var resp = await this.httpClient.PostAsJsonAsync("api/media", new
             {
-                title, description = desc, languageCode, mediaType, publishDate
+                title, description, languageCode, mediaType, publishDate
             });
             var bodyJSON = await resp.Content.ReadAsStringAsync();
 
@@ -141,7 +122,7 @@ namespace Media.Infrastructure.Tests
             var createdMedia = JsonConvert.DeserializeObject<Media>(bodyJSON)!;
             createdMedia.TotalViews.ShouldBe(0);
             createdMedia.Title.ShouldBe(title);
-            createdMedia.Description.ShouldBe(desc);
+            createdMedia.Description.ShouldBe(description);
             createdMedia.MediaType.ShouldBe(mediaType, StringCompareShould.IgnoreCase);
             createdMedia.PublishDate.ShouldBe(DateTime.Parse(publishDate));
         }

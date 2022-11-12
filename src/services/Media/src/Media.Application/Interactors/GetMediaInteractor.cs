@@ -19,6 +19,7 @@ namespace Media.Application.Interactors
             {
                 throw new NotFoundException($"Can't find Media with Id: {request.Id}");
             }
+
             media.TotalViews += 1;
             await this.repo.SetViewCountAsync(request.Id, media.TotalViews, token);
             return new MediaDTO(
@@ -29,7 +30,7 @@ namespace Media.Application.Interactors
                 media.CreateTime,
                 media.UpdateTime,
                 media.ExternalId,
-                media.ContentURL?.ToString(),
+                media.ContentURL,
                 media.TotalViews,
                 media.PublishDate
             );

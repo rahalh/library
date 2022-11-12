@@ -18,6 +18,7 @@ namespace Media.Infrastructure.Tests.Adapters
         private readonly string pgConnectionString;
 
         private readonly MediaRedisRepository cache;
+        private readonly ConnectionMultiplexer connection;
 
         public MediaRedisRepositoryTest(RedisPgTestContainer fixture)
         {
@@ -25,27 +26,29 @@ namespace Media.Infrastructure.Tests.Adapters
 
             var config = ConfigurationOptions.Parse(fixture.RedisConnectionString);
             config.AllowAdmin = true;
+            config.ConnectTimeout = 1000;
 
             var repo = new MediaPgRepository(new PostgresqlSettings {ConnectionString = this.pgConnectionString});
-            this.cache = new MediaRedisRepository(Logger.None, new RedisSettings {ConnectionString = config.ToString()}, repo);
+            this.connection = ConnectionMultiplexer.Connect(config);
+            this.cache = new MediaRedisRepository(Logger.None, repo, this.connection);
         }
 
         [Fact]
         public async Task GetById_WhenFetchValidIdAndRedisIsUp_ReturnsMedia()
         {
-            var id = "UPj6SSMvaKIuXwnY";
-            var media = await this.cache.FetchByIdAsync(id, CancellationToken.None);
+            var eid = "UPj6SSMvaKIuXwnY";
+            var media = await this.cache.FetchByIdAsync(eid, CancellationToken.None);
 
             media.ShouldNotBeNull();
             media.ShouldBeOfType<Media>();
-            media.ExternalId.ShouldBe(id);
+            media.ExternalId.ShouldBe(eid);
         }
 
         [Fact]
         public async Task GetById_WhenFetchValidIdAndRedisIsDown_ReturnsMedia()
         {
             var id = "UPj6SSMvaKIuXwnY";
-            await this.cache.Connection.CloseAsync();
+            await this.connection.CloseAsync();
             var media = await this.cache.FetchByIdAsync(id, CancellationToken.None);
 
             media.ShouldNotBeNull();
@@ -79,14 +82,15 @@ namespace Media.Infrastructure.Tests.Adapters
         {
             // Arrange
             var id = "UPj6SSMvaKIuXwnY";
+            var newViewCount = 12;
 
             // Act
-            await this.cache.SetViewCountAsync(id, 12, CancellationToken.None);
+            await this.cache.SetViewCountAsync(id, newViewCount, CancellationToken.None);
 
             // Assert
             var media = await this.cache.FetchByIdAsync(id, CancellationToken.None);
             media.ShouldNotBeNull();
-            media.TotalViews.ShouldBe(12);
+            media.TotalViews.ShouldBe(newViewCount);
         }
 
         [Fact]
@@ -94,15 +98,16 @@ namespace Media.Infrastructure.Tests.Adapters
         {
             // Arrange
             var id = "UPj6SSMvaKIuXwnY";
-            await this.cache.Connection.CloseAsync();
+            var newViewCount = 12;
+            await this.connection.CloseAsync();
 
             // Act
-            await this.cache.SetViewCountAsync(id, 12, CancellationToken.None);
+            await this.cache.SetViewCountAsync(id, newViewCount, CancellationToken.None);
 
             // Assert
             var media = await this.cache.FetchByIdAsync(id, CancellationToken.None);
             media.ShouldNotBeNull();
-            media.TotalViews.ShouldBe(12);
+            media.TotalViews.ShouldBe(newViewCount);
         }
 
         [Fact]
@@ -119,7 +124,7 @@ namespace Media.Infrastructure.Tests.Adapters
             var media = await this.cache.FetchByIdAsync(id, CancellationToken.None);
             media.ShouldNotBeNull();
             media.ContentURL.ShouldNotBeNull();
-            media.ContentURL.ToString().ShouldBe(url);
+            media.ContentURL.ShouldBe(url);
         }
 
         [Fact]
@@ -127,8 +132,8 @@ namespace Media.Infrastructure.Tests.Adapters
         {
             // Arrange
             var id = "UPj6SSMvaKIuXwnY";
-            var url = "url";
-            await this.cache.Connection.CloseAsync();
+            var url = "https://domain.org";
+            await this.connection.CloseAsync();
 
             // Act
             await this.cache.SetContentURLAsync(id, url, CancellationToken.None);
@@ -137,7 +142,7 @@ namespace Media.Infrastructure.Tests.Adapters
             var media = await this.cache.FetchByIdAsync(id, CancellationToken.None);
             media.ShouldNotBeNull();
             media.ContentURL.ShouldNotBeNull();
-            media.ContentURL.ToString().ShouldBe(url);
+            media.ContentURL.ShouldBe(url);
         }
 
         [Fact]
@@ -166,7 +171,7 @@ namespace Media.Infrastructure.Tests.Adapters
         public async Task InitializeAsync()
         {
             await DBHelper.Reset(this.pgConnectionString);
-            RedisHelper.Reset(this.cache.Connection);
+            RedisHelper.Reset(this.connection);
         }
 
         public async Task DisposeAsync() { }

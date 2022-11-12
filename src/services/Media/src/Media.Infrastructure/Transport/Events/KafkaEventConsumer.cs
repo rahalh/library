@@ -19,7 +19,7 @@ namespace Media.Infrastructure.Transport.Events
         private readonly ILogger logger;
         private readonly TimeSpan timeout = TimeSpan.FromMilliseconds(1000);
         private readonly int delay = 5000;
-        private readonly string[] topics = new[] {ConsumedEvents.BlobRemoved, ConsumedEvents.BlobUploaded};
+        private readonly string[] topics = {ConsumedEvents.BlobRemoved, ConsumedEvents.BlobUploaded};
 
         // todo I think it is better to inject ConsumerConfig or even better the entire consumer
         public BackgroundKafkaConsumer(ILogger logger, IServiceScopeFactory serviceScopeFactory, IConfiguration config)

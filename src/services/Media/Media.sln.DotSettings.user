@@ -1,10 +1,17 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">/home/rahal/.cache/JetBrains/Rider2021.2/resharper-host/temp/Rider/vAny/CoverageData/_Media.-574970188/Snapshot/snapshot.utdcvr</s:String>
-	
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=757ca15c_002Dcd8f_002D4e73_002Db80f_002D6e1e7d0c795d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetAllMedia_WhenFetchXMedia_ReturnsListOfXMedia" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=60c47431_002Da2fd_002D47a6_002Da78b_002D0fd51c0ec0c5/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateMediaEndpoint_WhenParamsAreValid_ReturnsNewMedia" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::7FA63AD5-22FE-42DE-A379-E93BBEB28282::net6.0::Media.Infrastructure.Tests.Adapters.MediaPgRepositoryTest&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::7FA63AD5-22FE-42DE-A379-E93BBEB28282::net6.0::Media.Infrastructure.Tests.MediaAPITest&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::7FA63AD5-22FE-42DE-A379-E93BBEB28282::net6.0::Media.Infrastructure.Tests.MediaAPITest.CreateMediaEndpoint_WhenParamsAreValid_ReturnsNewMedia&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	
+	
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=757ca15c_002Dcd8f_002D4e73_002Db80f_002D6e1e7d0c795d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetAllMedia_WhenFetchXMedia_ReturnsListOfXMedia" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;Solution /&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=9f3bd5d4_002Dfac0_002D4031_002D92e2_002D5dc5a4a87caa/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CreateMediaEndpoint_WhenParamsAreValid_ReturnsNewMedia #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::7FA63AD5-22FE-42DE-A379-E93BBEB28282::net6.0::Media.Infrastructure.Tests.MediaAPITest.CreateMediaEndpoint_WhenParamsAreValid_ReturnsNewMedia&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	

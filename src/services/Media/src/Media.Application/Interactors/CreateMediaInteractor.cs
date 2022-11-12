@@ -9,7 +9,7 @@ namespace Media.Application.Interactors
     using FluentValidation;
     using Helpers;
     using Newtonsoft.Json;
-    using ValidationException = global::Media.Application.Exceptions.ValidationException;
+    using ValidationException = Exceptions.ValidationException;
 
     public class CreateMediaInteractor
     {
@@ -37,7 +37,7 @@ namespace Media.Application.Interactors
                 media.CreateTime,
                 media.UpdateTime,
                 media.ExternalId,
-                media.ContentURL?.ToString(),
+                media.ContentURL,
                 media.TotalViews,
                 media.PublishDate
             );
