@@ -11,6 +11,7 @@ on:
 env:
   SERVICE: media
   IMAGE_NAME: media-service
+  DOCKER_ID: rahalh
 
 jobs:
   build:
@@ -37,11 +38,10 @@ jobs:
         run: dotnet build --configuration Release --no-restore
         working-directory: ${{env.working-directory}}
 
-      - name: Test
-        run: dotnet test --no-restore --verbosity normal
-        working-directory: ${{env.working-directory}}
+#      - name: Test
+#        run: dotnet test --no-restore --verbosity normal
+#        working-directory: ${{env.working-directory}}
 
-#        build and deploy
       - name: Setting environment variables
         id: get_env
         shell: bash
@@ -65,20 +65,10 @@ jobs:
       - name: Docker Tag ${{ env.SERVICE }}
         shell: bash
         run: |
-          sudo -E docker tag ${{ env.SERVICE }} ${{ secrets.REGISTRY_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ steps.get_env.outputs.GITHUB_SHA }}
-          sudo -E docker tag ${{ env.SERVICE }} ${{ secrets.REGISTRY_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ steps.get_env.outputs.RELEASE_VERSION }}
-          sudo -E docker tag ${{ env.SERVICE }} ${{ secrets.REGISTRY_ENDPOINT }}/${{ env.IMAGE_NAME }}:latest
+          sudo -E docker tag ${{ env.SERVICE }} ${{ env.DOCKER_ID }}/${{ env.IMAGE_NAME }}:${{ steps.get_env.outputs.GITHUB_SHA }}
+          sudo -E docker tag ${{ env.SERVICE }} ${{ env.DOCKER_ID }}/${{ env.IMAGE_NAME }}:${{ steps.get_env.outputs.RELEASE_VERSION }}
+          sudo -E docker tag ${{ env.SERVICE }} ${{ env.DOCKER_ID }}/${{ env.IMAGE_NAME }}:latest
 
-      - name: Compose push ${{ inputs.service }}
+      - name: Compose push ${{ env.SERVICE }}
         shell: bash
-        run: sudo -E docker push ${{ inputs.service }}
-
-#      - name: Build & push container image
-#        uses: ./.github/workflows/composite
-#        with:
-#          service: ${{ env.SERVICE }}
-#          registry_host: ${{ secrets.REGISTRY_HOST }}
-#          registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
-#          image_name: ${{ env.IMAGE_NAME }}
-#          registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
-#          registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: sudo -E docker push ${{ env.SERVICE }}
