@@ -3,14 +3,15 @@ name: "Build, test and deploy the Media API"
 on:
   workflow_dispatch:
   push:
-    branches: [main, dev]
+    branches: [ main, dev ]
     paths:
       - src/services/Media/**
       - .github/workflows/media.api.yml
 
 env:
   SERVICE: media
-  IMAGE: media.api
+  DOCKER_IMAGE: rahalh/media
+  DOCKER_CONTEXT: ./src/services/Media
 
 jobs:
   build:
@@ -19,7 +20,18 @@ jobs:
       working-directory: src/services/Media
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+
+      - name: Setting environment variables
+        id: get_env
+        run: |
+          TMP_GITHUB_COMMITS_COUNT=$(git rev-list --count HEAD)
+          TMP_GITHUB_COUNT_NUMBER=$(echo ${GITHUB_RUN_NUMBER})
+          echo "::set-output name=GITHUB_SHA::$(echo ${GITHUB_SHA::8})"
+          echo "::set-output name=RELEASE_VERSION::1.$TMP_GITHUB_COMMITS_COUNT.$TMP_GITHUB_COUNT_NUMBER"
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
@@ -38,13 +50,20 @@ jobs:
         run: dotnet test --no-restore --verbosity normal
         working-directory: ${{env.working-directory}}
 
-      - name: Deploy
-        if: ${{ github.ref_name == 'main' }}
+      - name: Prepare for push
+        id: prep
+        run: |
+          TAGS="${{ env.DOCKER_IMAGE }}:${{ steps.prepare.outputs.GITHUB_SHA }},${{ env.DOCKER_IMAGE }}:${{ steps.prepare.outputs.RELEASE_VERSION }},${{ env.DOCKER_IMAGE }}:latest"
+          echo ::set-output name=tags::${TAGS}
+
+      - name: Build & push container image
         uses: ./.github/workflows/composite
         with:
           service: ${{ env.SERVICE }}
+          context: ${{ env.DOCKER_CONTEXT }}
           registry_host: ${{ secrets.REGISTRY_HOST }}
           registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
-          image_name: ${{ env.IMAGE }}
+          image_name: ${{ env.DOCKER_IMAGE }}
+          image_tags: ${{ steps.prep.outputs.tags }}
           registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
           registry_password: ${{ secrets.DOCKERHUB_TOKEN }}

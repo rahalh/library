@@ -5,6 +5,9 @@ inputs:
   service:
     description: "Service to build"
     required: true
+  context:
+    description: "Docker context"
+    required: true
   registry_host:
     description: "Image registry host e.g. myacr.azureacr.io"
     required: true
@@ -13,6 +16,9 @@ inputs:
     required: true
   image_name:
     description: "Name of image"
+    required: true
+  image_tags:
+    description: "Image tags"
     required: true
   registry_username:
     description: "Registry username"
@@ -30,14 +36,15 @@ runs:
         username: ${{ inputs.registry_username }}
         password: ${{ inputs.registry_password }}
 
-    - name: Compose build ${{ inputs.service }}
-      shell: bash
-      run: sudo -E docker-compose -f docker-compose-build.yaml build ${{ inputs.service }}
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
 
-    - name: Docker Tag ${{ inputs.service }}
-      shell: bash
-      run: sudo -E docker tag ${{ inputs.service }} ${{ inputs.registry_endpoint }}/${{ inputs.image_name }}:latest
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
 
-    - name: Compose push ${{ inputs.service }}
-      shell: bash
-      run: sudo -E docker push ${{ inputs.service }}
+    - name: Build and push ${{ inputs.service }}
+      uses: docker/build-push-action@v3
+      with:
+        context: ${{ inputs.context }}
+        push: true
+        tags: ${{ inputs.image_tags }}
