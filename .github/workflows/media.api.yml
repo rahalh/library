@@ -72,3 +72,4 @@ jobs:
             ${{ env.DOCKER_ID }}/${{ env.IMAGE_NAME }}:latest
           # build on feature branches, push only on main branch
           push: ${{ github.ref == 'refs/heads/main' }}
+        working-directory: ${{env.working-directory}}
