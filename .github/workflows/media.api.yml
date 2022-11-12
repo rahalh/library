@@ -65,3 +65,4 @@ jobs:
           image_tags: ${{ steps.prep.outputs.tags }}
           registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
           registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
+        working-directory: ${{env.working-directory}}
