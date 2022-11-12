@@ -52,7 +52,7 @@ jobs:
       - name: Prepare for push
         id: prep
         run: |
-          TAGS="${{ env.DOCKER_IMAGE }}:${{ steps.prepare.outputs.GITHUB_SHA }},${{ env.DOCKER_IMAGE }}:${{ steps.prepare.outputs.RELEASE_VERSION }},${{ env.DOCKER_IMAGE }}:latest"
+          TAGS="${{ env.DOCKER_IMAGE }}:${{ steps.get_env.outputs.GITHUB_SHA }},${{ env.DOCKER_IMAGE }}:${{ steps.get_env.outputs.RELEASE_VERSION }},${{ env.DOCKER_IMAGE }}:latest"
           echo ::set-output name=tags::${TAGS}
 
       - name: Build & push container image
