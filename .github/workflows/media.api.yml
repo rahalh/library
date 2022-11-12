@@ -57,18 +57,21 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Compose build ${{ env.SERVICE }}
+      - name: build image
         shell: bash
-        run: sudo -E docker build . -t ${{ env.SERVICE }}
+        run: sudo -E docker build . -t media
         working-directory: ${{env.working-directory}}
 
-      - name: Docker Tag ${{ env.SERVICE }}
+      - name: tag image
         shell: bash
         run: |
-          sudo -E docker tag ${{ env.SERVICE }} ${{ env.DOCKER_ID }}/${{ env.IMAGE_NAME }}:${{ steps.get_env.outputs.GITHUB_SHA }}
-          sudo -E docker tag ${{ env.SERVICE }} ${{ env.DOCKER_ID }}/${{ env.IMAGE_NAME }}:${{ steps.get_env.outputs.RELEASE_VERSION }}
-          sudo -E docker tag ${{ env.SERVICE }} ${{ env.DOCKER_ID }}/${{ env.IMAGE_NAME }}:latest
+          sudo -E docker tag media ${{ env.DOCKER_ID }}/${{ env.IMAGE_NAME }}:${{ steps.get_env.outputs.GITHUB_SHA }}
+          sudo -E docker tag media ${{ env.DOCKER_ID }}/${{ env.IMAGE_NAME }}:${{ steps.get_env.outputs.RELEASE_VERSION }}
+          sudo -E docker tag media ${{ env.DOCKER_ID }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Compose push ${{ env.SERVICE }}
         shell: bash
-        run: sudo -E docker push ${{ env.SERVICE }}
+        run: |
+          sudo -E docker push ${{ env.DOCKER_ID }}/${{ env.IMAGE_NAME }}:${{ steps.get_env.outputs.GITHUB_SHA }}
+          sudo -E docker push ${{ env.DOCKER_ID }}/${{ env.IMAGE_NAME }}:${{ steps.get_env.outputs.RELEASE_VERSION }}
+          sudo -E docker push ${{ env.DOCKER_ID }}/${{ env.IMAGE_NAME }}:latest
